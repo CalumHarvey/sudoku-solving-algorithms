@@ -2,6 +2,9 @@
 
 
 #Selection of algorithm - use use input from user (give each algorithm a number 1-6)
+#how many algorithms to compare?
+#which algorithms are going to be compared (use numbers??)
+#return list of algorithms that are going to be compared
 @staticmethod
 def algorithmSelection(parameter_list):
 
@@ -11,6 +14,13 @@ def algorithmSelection(parameter_list):
 
     return selectionAlgorithm
 
+
+class Board:
+    def __init__(self):
+        self.sudoku = null
+    
+    def boardGen(self, difficulty):
+        #get board based on difficulty 
 
 
 def board(self, parameter_list):
@@ -31,9 +41,10 @@ def sudokuGen:
 #Running the selected algorithm (main)
 #Can have more functions for data processing for time taken and number of passes through
 @staticmethod
-def runAlgorithm:
+def runAlgorithm(algorithms):
 
- 
+    for(x in algorithms):
+        #do x algorithm
 
 
 
