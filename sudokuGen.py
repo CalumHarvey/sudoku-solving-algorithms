@@ -27,10 +27,8 @@ def boardPicker(difficulty):
         splitDone = x.split(" ")
         finalBoard.append(splitDone)
     
-    return finalBaord
+    return finalBoard
 
-
-boardPicker("easy")
 
     
 
