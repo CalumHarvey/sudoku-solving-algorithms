@@ -8,8 +8,7 @@ algorithmDict = {1 : "backtracking", 2 : "genetic"}#...
 #how many algorithms to compare?
 #which algorithms are going to be compared (use numbers??)
 #return list of algorithms that are going to be compared
-#needs to select difficulty - dont use global variables
-@staticmethod
+
 def algorithmSelection():
 
     print("a description of each algorithm and how to select them all")
@@ -61,6 +60,7 @@ class Analysis:
         self.board = Board(self.difficulty)
         self.results = self.board.runAlgorithms(self.algorithms)
     
+    #can only test after implementing algorithms
     def timeComparison(self):
         #compare time that algorithms took to solve board to each other
         pass
