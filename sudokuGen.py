@@ -12,9 +12,7 @@ currentDir = os.path.dirname(__file__)
 def boardPicker(difficulty):
     finalBoard = []
     
-    #lineNumber = random.randint(0,3)
-    lineNumber = 0
-    #fileName =  + str(difficulty) + ".txt"
+    lineNumber = random.randint(0,3)
     filePath = "puzzles/" + str(difficulty) + ".txt"
     absFilePath = os.path.join(currentDir, filePath)
 
@@ -28,7 +26,8 @@ def boardPicker(difficulty):
     for x in firstSplit:
         splitDone = x.split(" ")
         finalBoard.append(splitDone)
-    print(finalBoard)
+    
+    return finalBaord
 
 
 boardPicker("easy")
