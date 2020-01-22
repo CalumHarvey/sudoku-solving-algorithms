@@ -11,7 +11,7 @@ def findUnassignedLocation(board, pos):
 
 def noConflicts(board, pos, num):
 
-    return not usedInRow(board, pos[0], num) and not usedInCol(board, pos[1], num) and not usedInBox(board, pos[0] - pos[0]%3, pos[1]-pos[1]%3)
+    return not usedInRow(board, pos[0], num) and not usedInCol(board, pos[1], num) and not usedInBox(board, pos[0] - pos[0]%3, pos[1]-pos[1]%3, num)
 
 
 def usedInRow(board, row, num):
