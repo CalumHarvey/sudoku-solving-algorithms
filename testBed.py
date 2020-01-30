@@ -1,5 +1,7 @@
 import sudokuGen
 
+import algorithms
+
 #dictionary that takes algorithm number and returns the name of the algorithm
 algorithmDict = {1 : "backtracking", 2 : "genetic"}#...
 
@@ -33,17 +35,18 @@ class Board:
     
     #self: board that is being solved
     #algorithm: single algorithm that is going to be solved by the function -
-    def runAlgorithms(self, algorithms):
+    def runAlgorithms(self, algorithmList):
 
         #create dictionaries for results
         timeDict = {}
         passesDict = {}
 
         #loop for each algorithm that wants to be run on board 
-        for x in algorithms:
+        for x in algorithmList:
+            print(x)
             #result: a tuple of time taken and passes made by algorithm
             #each algorithm file should have runAlgorithm file 
-            result = x.runAlgorithm(self.board)
+            result = algorithms.backtracking.runAlgorithm(self.board)
             #results added to dictionary with algorithm as key and result as value 
             timeDict.update( {x : result[0]} )
             passesDict.update( {x : result[1]} )
@@ -68,6 +71,13 @@ class Analysis:
     def passesComparison(self):
         #compare number of passes to solve board to each other
         pass
+
+
+def main():
+    a = Analysis()
+
+main()
+
 
 #Generation of board - potentially use pre-existing boards for initial design and potentially write creation algorithm at the end
 #Should call the board generation function in another file

@@ -1,9 +1,9 @@
-
+import time
 
 def findUnassignedLocation(board, pos):
     for row in range(9):
         for col in range(9):
-            if(board[row, col] == 0):
+            if(board[row][col] == 0):
                 pos[0] = row
                 pos[1] = col
                 return True
@@ -34,11 +34,12 @@ def usedInBox(board, boxStartRow, boxStartCol, num):
     return False
 
 def solveSudoku(board):
+    passes = 0
 
     pos = [0,0]
     
     if(not findUnassignedLocation(board, pos)):
-        return True
+        return True, passes
 
     #might need this
     #row = pos[0]
@@ -49,8 +50,22 @@ def solveSudoku(board):
             board[pos[0], pos[1]] = num
 
             if(solveSudoku(board)):
-                return True
+                return True, passes
             
             board[pos[0], pos[1]] = 0
     
+    passes+= 1
     return False
+
+def runAlgorithm(board):
+    start = time.time()
+    returned  = solveSudoku(board)
+    end = time.time()
+
+    timeTaken = end - start
+
+    #timetaken returns 0 - algorithm too quick
+    #number of passes returns 0 ????
+
+    return timeTaken, returned[1]
+
