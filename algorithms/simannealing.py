@@ -1,5 +1,6 @@
 # Simulated Annealing
 import random
+from simanneal import Annealer
 
 board = [[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]]
 
@@ -21,24 +22,87 @@ def getBox(boxNum):
     firstRow = (boxNum // 3) * 3
     firstCol = (boxNum % 3) * 3
 
-    boxValues = [(firstRow+i, firstCol+j) for i in range(3) for j in range(3)]
-    print(boxValues)
-    return boxValues
+    boxCoords = [(firstRow+i, firstCol+j) for i in range(3) for j in range(3)]
 
-#def intialSolution(board):
-#    for x in range(0,9,3):
+    return boxCoords
 
-
+'''
+Create intial solution where numbers 1-9 are in each 3x3 box only once each 
+'''
 def intialSolution(board):
-    for row in board:
-        permu = [n for n in range(1,10) if n not in row]
-        random.shuffle(permu)
-        permuCounter = 0
+    populatedBoard = board.copy()
+    for boxNum in range(9):
+        boxCoords = getBox(boxNum)
+        
+        valuesCoords = [i for i in boxCoords if populatedBoard[i[0]][i[1]] != 0]
+        values = [populatedBoard[i[0]][i[1]] for i in valuesCoords]
+
+        zeroCoords = [i for i in boxCoords if populatedBoard[i[0]][i[1]] == 0]
+        toFillValues = [i for i in range(1,10) if i not in values]
+        random.shuffle(toFillValues)
+        fillCounter = 0
+        for x in zeroCoords:
+            populatedBoard[x[0]][x[1]] = toFillValues[fillCounter]
+            fillCounter += 1
+
+    return populatedBoard
+
+class SudokuSolve(Annealer):
+    def __init__(self, board):
+        self.board = board
+        self.state = intialSolution(self.board)
+
+    '''Swap 2 cells within a single 3x3 box randomly'''
+    def move(self):
+        boxNum = random.randrange(9)
+        boxCoords = getBox(boxNum)
+        #print(boxCoords)
+        #print(board)
+        changeableCells = [i for i in boxCoords if board[i[0]][i[1]] == 0]
+        #print(changeableCells)
+        x,y = random.sample(changeableCells, 2)
+        self.state[x[0]][x[1]], self.state[y[0]][y[1]] = self.state[y[0]][y[1]] , self.state[x[0]][x[1]]
+
+    '''Calculate number of errors in solution'''
+    def energy(self):
+        score = 0
         for x in range(9):
-            if row[x] == 0:
-                row[x] = permu[permuCounter]
-                permuCounter += 1
+            rowSet = set()
+            colSet = set()
+            for y in range(9):
+                rowSet.add(self.state[x][y])
+                colSet.add(self.state[y][x])
+
+            score += (9 - len(rowSet))
+            score += (9 - len(colSet))            
+
+        if(score == 0):
+            self.user_exit = True
+
+        return score
+
+def runAlgorithm():
+    board = [[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]]
+    sudoku = SudokuSolve(board)
+    sudoku.copy_strategy = "method"
+
+    sudoku.Tmax = 0.5
+    sudoku.Tmin = 0.05
+    sudoku.steps = 100000
+    sudoku.updates = 100
+
+    print(sudoku.board)
+
+    state, e = sudoku.anneal()
+
+    #print(state)
+
+
 
 
 if __name__ == "__main__":
-    getBox(3)
+    
+    runAlgorithm()
+
+    
+
