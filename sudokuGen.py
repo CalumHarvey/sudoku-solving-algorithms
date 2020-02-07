@@ -35,4 +35,6 @@ def boardPicker(difficulty):
     
     return finalBoard
 
+boardPicker("1")
+
 
