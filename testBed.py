@@ -5,6 +5,10 @@ import algorithms
 #dictionary that takes algorithm number and returns the name of the algorithm
 algorithmDict = {1 : "backtracking", 2 : "genetic"}#...
 
+#create dictionaries for results
+timeDict = {}
+passesDict = {}
+
 
 #Selection of algorithm - use use input from user (give each algorithm a number 1-6)
 #how many algorithms to compare?
@@ -15,7 +19,8 @@ def algorithmSelection():
 
     print("a description of each algorithm and how to select them all")
 
-    selectionAlgorithm = input("Select algorithm: ")
+    #selectionAlgorithm = input("Select algorithm: ")
+    selectionAlgorithm = "1"
 
     return selectionAlgorithm
 
@@ -23,7 +28,8 @@ def difficultySelection():
 
     print("Select difficulty")
 
-    difficultySelection = input()
+    #difficultySelection = input()
+    difficultySelection = "1"
 
     return difficultySelection
 
@@ -37,9 +43,6 @@ class Board:
     #algorithm: single algorithm that is going to be solved by the function -
     def runAlgorithms(self, algorithmList):
 
-        #create dictionaries for results
-        timeDict = {}
-        passesDict = {}
 
         #loop for each algorithm that wants to be run on board 
         for x in algorithmList:
@@ -65,16 +68,23 @@ class Analysis:
     
     #can only test after implementing algorithms
     def timeComparison(self):
+        print("Times for Algorithms")
+        for key,val in timeDict.items():
+            print(key, ":", val)
+            
         #compare time that algorithms took to solve board to each other
-        pass
 
     def passesComparison(self):
-        #compare number of passes to solve board to each other
-        pass
+        print("Passes for Algorithms")
+        for key,val in passesDict.items():
+            print(key, ":", val)
+        #compare number of passes to solve board to each othe
 
 
 def main():
     a = Analysis()
+    a.timeComparison()
+    a.passesComparison()
 
 main()
 

@@ -28,8 +28,10 @@ def boardPicker(difficulty):
     firstSplit = lineStripped.split(",")
 
     for x in firstSplit:
-        splitDone = x.split(" ")
+        splitDone = list(map(int, x.split(" ")))
         finalBoard.append(splitDone)
+
+    print(finalBoard)
     
     return finalBoard
 
