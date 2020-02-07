@@ -15,7 +15,19 @@ loop end
 
 reduce temperature and loop start 2
 '''
+# Given box number from 0-8 return the a list of the coordinates of the box  
+def getBox(boxNum):
     
+    firstRow = (boxNum // 3) * 3
+    firstCol = (boxNum % 3) * 3
+
+    boxValues = [(firstRow+i, firstCol+j) for i in range(3) for j in range(3)]
+    print(boxValues)
+    return boxValues
+
+#def intialSolution(board):
+#    for x in range(0,9,3):
+
 
 def intialSolution(board):
     for row in board:
@@ -29,4 +41,4 @@ def intialSolution(board):
 
 
 if __name__ == "__main__":
-    intialSolution(board)
+    getBox(3)
