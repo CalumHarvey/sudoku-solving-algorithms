@@ -1,6 +1,8 @@
 # Simulated Annealing
 import random
+import numpy as np
 from simanneal import Annealer
+
 
 board = [[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]]
 
@@ -22,7 +24,7 @@ def getBox(boxNum):
     firstRow = (boxNum // 3) * 3
     firstCol = (boxNum % 3) * 3
 
-    boxCoords = [(firstRow+i, firstCol+j) for i in range(3) for j in range(3)]
+    boxCoords = [[firstRow+i, firstCol+j] for i in range(3) for j in range(3)]
 
     return boxCoords
 
@@ -50,18 +52,17 @@ def intialSolution(board):
 class SudokuSolve(Annealer):
     def __init__(self, board):
         self.board = board
-        self.state = intialSolution(self.board)
+        state = intialSolution(board)
+        super().__init__(state)
 
     '''Swap 2 cells within a single 3x3 box randomly'''
     def move(self):
         boxNum = random.randrange(9)
         boxCoords = getBox(boxNum)
-        #print(boxCoords)
-        #print(board)
         changeableCells = [i for i in boxCoords if board[i[0]][i[1]] == 0]
-        #print(changeableCells)
-        x,y = random.sample(changeableCells, 2)
-        self.state[x[0]][x[1]], self.state[y[0]][y[1]] = self.state[y[0]][y[1]] , self.state[x[0]][x[1]]
+        a = random.sample(changeableCells, 1)
+        b = random.sample(changeableCells, 1)
+        self.state[a[0][0]][a[0][1]], self.state[b[0][0]][b[0][1]] = self.state[b[0][0]][b[0][1]] , self.state[a[0][0]][a[0][1]]
 
     '''Calculate number of errors in solution'''
     def energy(self):
@@ -74,7 +75,7 @@ class SudokuSolve(Annealer):
                 colSet.add(self.state[y][x])
 
             score += (9 - len(rowSet))
-            score += (9 - len(colSet))            
+            score += (9 - len(colSet))           
 
         if(score == 0):
             self.user_exit = True
@@ -82,20 +83,28 @@ class SudokuSolve(Annealer):
         return score
 
 def runAlgorithm():
-    board = [[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]]
+    board = np.array([[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]])
     sudoku = SudokuSolve(board)
     sudoku.copy_strategy = "method"
 
-    sudoku.Tmax = 0.5
+    #sudoku.steps = 1000000
+    #auto_schedule = sudoku.auto(minutes=1)
+    #print(auto_schedule)
+    #sudoku.set_schedule(auto_schedule)
+
+
+    sudoku.Tmax = 5
     sudoku.Tmin = 0.05
-    sudoku.steps = 100000
+    sudoku.steps = 10000
     sudoku.updates = 100
 
-    print(sudoku.board)
+    #print(sudoku.board)
 
     state, e = sudoku.anneal()
 
-    #print(state)
+    print()
+    print(state)
+    print(e)
 
 
 
