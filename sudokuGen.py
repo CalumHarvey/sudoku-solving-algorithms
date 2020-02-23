@@ -46,13 +46,12 @@ def usedInBox(board, boxStartRow, boxStartCol, num):
                 return True
     return False
 
-def solveSudoku(board, counter):
+def solveSudoku(board):
 
     pos = [0,0]
     
     if(not findUnassignedLocation(board, pos)):
-        print("solution Found")
-        counter += 1
+        #print("solution Found")
         return True
 
     #might need this
@@ -63,9 +62,8 @@ def solveSudoku(board, counter):
         if(noConflicts(board, pos, num)):
             board[row][col] = num
 
-            if(solveSudoku(board,counter)):
-                print("solution Found 2")
-                counter += 1
+            if(solveSudoku(board)):
+                #print("solution Found 2")
                 return True
             
             board[row][col] = 0
@@ -122,20 +120,17 @@ def selectEmptyCell(grid):
 
 def main(grid):
     attempts = 5
-    counter = 0
 
     while attempts > 0:
+        counter = 0
 
         coords = selectEmptyCell(grid)
         backup = grid[coords[0]][coords[1]]
 
         print("coords", coords)
-        print("before", grid)
 
         grid[coords[0]][coords[1]] = 0
-        print("\n")
-
-        print("after", grid)
+        
         input()
 
         copyGrid = []
@@ -144,7 +139,14 @@ def main(grid):
             for c in range(0,9):
                 copyGrid[r].append(grid[r][c])
     
-        solveSudoku(copyGrid,counter)
+        print("copygrid before: ", copyGrid)
+        solved = solveSudoku(copyGrid)
+        while((solved) and (counter < 1)):
+            print("run")
+            counter += 1
+            solved = solveSudoku(copyGrid) 
+        print("copygrid after: ", copyGrid)
+        print("solved: ", solved)
 
         print(counter)
 
