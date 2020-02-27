@@ -14,13 +14,13 @@ import datetime
 import random
 import numpy as np
 import copy
+import os
 
 counter = 0
 
 class sudokuGen:
     def __init__(self, grid):
-         self.grid = grid
-         self.updatedBoard = []
+        self.grid = grid
 
 
 
@@ -138,12 +138,13 @@ class sudokuGen:
         # 15 = easy
         # 30 = easy
         # 100 = hard
-        attempts = 50
+        # 50 = very easy
+        # 75 = very easy
+        attempts = 5
         asc = [1,2,3,4,5,6,7,8,9]
         desc = [9,8,7,6,5,4,3,2,1]
 
         while(attempts > 0):
-            print(attempts)
 
             copyGrid1 = []
             copyGrid2 = []
@@ -160,7 +161,6 @@ class sudokuGen:
             self.solveSudoku(copyGrid2,desc)
 
             if(not np.array_equal(copyGrid1, copyGrid2)):
-                #print("run")
                 grid[coords[0]][coords[1]] = backup
                 attempts -= 1
 
@@ -170,24 +170,50 @@ class sudokuGen:
 
 def runAlgorithm():
 
-    grid = []
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
-    grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+    boards = []
 
-    s = sudokuGen(grid)
+    cur_path = os.path.dirname(__file__)
+    rel_path = "puzzles/puzzles.txt"
+    abs_file_path = os.path.join(cur_path, rel_path)
 
-    s.fillSudoku(grid)
+    #f = open(abs_file_path, "r")
+    #lines = f.readlines()
+    #f.close()  
 
-    finishedGrid = s.main(grid)
+    numPuzzles = 10 
 
-    print(finishedGrid)
+    for x in range(numPuzzles):
+
+        print(x)
+
+        grid = []
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+        grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+        s = sudokuGen(grid)
+        s.fillSudoku(grid)
+        finishedGrid = s.main(grid)
+
+        # 2d array into long string to stop in text file
+        gridSplit = [y for x in finishedGrid for y in x]
+        stringGrid = ",".join(map(str,gridSplit))
+
+        boards.append(stringGrid)
+
+    f = open(abs_file_path, "w")
+    for line in boards:
+        f.write(line + "\n")
+    f.close()
+
+
+        #print(finishedGrid)
 
     # timetaken returns 0 - algorithm too quick
     # number of passes returns 0 ????
