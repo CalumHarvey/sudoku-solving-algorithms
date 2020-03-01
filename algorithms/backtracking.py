@@ -45,7 +45,6 @@ def solveSudoku(board):
     pos = [0, 0]
 
     if(not findUnassignedLocation(board, pos)):
-        print("true1")
         return True
 
     # might need this
@@ -57,7 +56,6 @@ def solveSudoku(board):
             board[row][col] = num
 
             if(solveSudoku(board)):
-                print("true2")
                 return True
 
             board[row][col] = 0
@@ -68,19 +66,20 @@ def solveSudoku(board):
 
 def runAlgorithm(board):
     solveSudoku.counter = 0
+    newBoard = np.array(board)
+
     start = datetime.datetime.now()
-    returned = solveSudoku(board)
+    returned = solveSudoku(newBoard)
     end = datetime.datetime.now()
 
+    #startString = start.strftime("%f")
+    #endString = end.strftime("%f")
+
     timeTaken = end - start
+    #(format(timeTaken, ',d'))
+    timeOutput = (timeTaken.total_seconds())
 
-    print(returned)
-    print(board)
-
-    # timetaken returns 0 - algorithm too quick
-    # number of passes returns 0 ????
-
-    return timeTaken, solveSudoku.counter
+    return timeOutput, solveSudoku.counter
 
 
 if __name__ == "__main__":

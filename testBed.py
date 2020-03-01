@@ -1,6 +1,8 @@
 import sudokuGen
-
 import algorithms
+import os
+import numpy as np
+import statistics
 
 #dictionary that takes algorithm number and returns the name of the algorithm
 algorithmDict = {1 : "backtracking", 2 : "genetic"}#...
@@ -16,13 +18,17 @@ passesDict = {}
 #return list of algorithms that are going to be compared
 
 def algorithmSelection():
+    selectionAlgorithm = "0"
+    algorithms = []
 
-    print("a description of each algorithm and how to select them all")
+    print("Type 1 for backtracking")
+    print("Type 2 for simannealing")
+    print("Type 3 for Genetic")
 
-    #selectionAlgorithm = input("Select algorithm: ")
-    selectionAlgorithm = "1"
+    selectionAlgorithm = input("Select one algorithm: ")
+    algorithms.append(selectionAlgorithm)
 
-    return selectionAlgorithm
+    return algorithms
 
 def difficultySelection():
 
@@ -35,54 +41,100 @@ def difficultySelection():
 
 
 class Board:
-    def __init__(self, difficulty):
+    def __init__(self):
+        self.board = []
+        self.numLines = 0
+        cur_path = os.path.dirname(__file__)
+        rel_path = "puzzles/puzzles.txt"
+        self.abs_file_path = os.path.join(cur_path, rel_path)
         #on initialisation of board, pick board based on difficulty of board selected 
-        self.board = sudokuGen.boardPicker(difficulty)
+
+    def getBoard(self, boardNum):
+
+        with open(self.abs_file_path) as fp:
+            lines = fp.readlines()
+
+        self.formatBoard(lines[boardNum])
+
+
+    def formatBoard(self, stringBoard):
+        arrayStrip = stringBoard.strip()
+        arraySplit = arrayStrip.split(",")
+        intArray = [int(i) for i in arraySplit]
+        
+        self.board = np.reshape(intArray, (9,9))
+
+
     
     #self: board that is being solved
     #algorithm: single algorithm that is going to be solved by the function -
-    def runAlgorithms(self, algorithmList):
-
+    def runAlgorithm(self, algorithm):
+        timeArray = []
+        passesArray = []
+        self.numLines = sum(1 for line in open(self.abs_file_path))
 
         #loop for each algorithm that wants to be run on board 
-        for x in algorithmList:
-            print(x)
-            #result: a tuple of time taken and passes made by algorithm
+        for x in range(self.numLines):
+            self.getBoard(x)
+            #print(x)
+            #print(self.board)
+
             #each algorithm file should have runAlgorithm file 
-            result = algorithms.backtracking.runAlgorithm(self.board)
+            #result: a tuple of time taken and passes made by algorithm
+            result = (0 , 0)
+
+            if(algorithm == "1"):
+                result = algorithms.backtracking.runAlgorithm(self.board)
+            elif(algorithm == "2"):
+                result = algorithms.simannealing.runAlgorithm(self.board)
+            elif(algorithm == "3"):
+                pass
+                #result = algorithms.genetic.runAlgorithm(self.board)
+
+            print(result[0])
+            print(result[1])
             #results added to dictionary with algorithm as key and result as value 
-            timeDict.update( {x : result[0]} )
-            passesDict.update( {x : result[1]} )
+            timeArray.append(result[0])
+            passesArray.append(result[1])
 
-
-
-        return timeDict, passesDict
+        return timeArray, passesArray
 
 
 class Analysis:
     def __init__(self):
-        self.difficulty = difficultySelection()
+        #self.difficulty = difficultySelection()
         self.algorithms = algorithmSelection()
-        self.board = Board(self.difficulty)
-        self.results = self.board.runAlgorithms(self.algorithms)
+        self.b = Board()
+        self.timeArray = []
+        self.passesArray = []
+
+    def runAllAlgorithms(self):
+        for x in self.algorithms:
+            results = self.b.runAlgorithm(x)
+            self.timeArray.append(results[0])
+            self.passesArray.append(results[1])
     
     #can only test after implementing algorithms
     def timeComparison(self):
-        print("Times for Algorithms")
-        for key,val in timeDict.items():
-            print(key, ":", val)
+        for x in range(len(self.timeArray)):
+            print("Time for Algorithm", self.algorithms[x])
+            print("Raw Data: ", self.timeArray[x])
+            print("Mean: ", statistics.mean(self.timeArray[x]))
             
         #compare time that algorithms took to solve board to each other
 
     def passesComparison(self):
-        print("Passes for Algorithms")
-        for key,val in passesDict.items():
-            print(key, ":", val)
+        for x in range(len(self.passesArray)):
+            print("Passes for Algorithm", self.algorithms[x])
+            print("Raw Data: ", self.passesArray[x])
+            print("Mean: ", statistics.mean(self.passesArray[x]))
+        
         #compare number of passes to solve board to each othe
 
 
 def main():
     a = Analysis()
+    a.runAllAlgorithms()
     a.timeComparison()
     a.passesComparison()
 
@@ -96,6 +148,3 @@ main()
 
 #Running the selected algorithm (main)
 #Can have more functions for data processing for time taken and number of passes through
-
-
-

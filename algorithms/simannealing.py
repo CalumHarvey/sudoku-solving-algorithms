@@ -2,6 +2,7 @@
 import random
 import numpy as np
 from simanneal import Annealer
+import datetime
 
 
 board = [[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]]
@@ -52,6 +53,7 @@ def intialSolution(board):
 class SudokuSolve(Annealer):
     def __init__(self, board):
         self.board = board
+        self.counter = 0
         state = intialSolution(board)
         super().__init__(state)
 
@@ -63,6 +65,7 @@ class SudokuSolve(Annealer):
         a = random.sample(changeableCells, 1)
         b = random.sample(changeableCells, 1)
         self.state[a[0][0]][a[0][1]], self.state[b[0][0]][b[0][1]] = self.state[b[0][0]][b[0][1]] , self.state[a[0][0]][a[0][1]]
+        self.counter += 1
 
     '''Calculate number of errors in solution'''
     def energy(self):
@@ -82,39 +85,30 @@ class SudokuSolve(Annealer):
 
         return score
 
-def runAlgorithm():
-    board = np.array([[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]])
-    boardTest = np.array([[4, 6, 2, 1, 2, 8, 8, 7, 3,],[7, 1, 3, 6, 5, 7, 9, 4, 2],[5, 8, 9, 9, 4, 3, 5, 6, 1],[2, 6, 3, 8, 2, 3, 8, 9, 3],[1, 8, 4, 9, 5, 7, 7, 1, 5],[9, 5, 7, 4, 6, 1, 6, 2, 4],[3, 4, 5, 4, 8, 9, 3, 5, 8],[7, 9, 8, 6, 3, 2, 1, 7, 6],[1, 6, 2, 5, 1, 7, 4, 9, 2]])
-    sudoku = SudokuSolve(boardTest)
+def runAlgorithm(board):
+    sudoku = SudokuSolve(board)
+    print
     sudoku.copy_strategy = "method"
-    #print(board)
-    #print(intialSolution(board))
 
-    #sudoku.steps = 1000000
-    #auto_schedule = sudoku.auto(minutes=1)
-    #print(auto_schedule)
-    #sudoku.set_schedule(auto_schedule)
-
-
-    sudoku.Tmax = 10
+    sudoku.Tmax = 0.5
     sudoku.Tmin = 0.05
     sudoku.steps = 700000
     sudoku.updates = 1000
 
-    #print(sudoku.board)
-
+    start = datetime.datetime.now()
     state, e = sudoku.anneal()
+    end = datetime.datetime.now()
 
-    print()
-    print(state)
-    print(e)
+    timeTaken = end - start
+
+    timeOutput = (timeTaken.total_seconds())
+
+    return timeOutput, sudoku.counter
 
 
 
 
 if __name__ == "__main__":
-    
-    runAlgorithm()
+    board = np.array([[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]])
 
-    
-
+    runAlgorithm(board)
