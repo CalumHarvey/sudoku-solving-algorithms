@@ -27,7 +27,7 @@ def getBox(boxNum):
 
     boxCoords = [[firstRow+i, firstCol+j] for i in range(3) for j in range(3)]
 
-    return boxCoords
+    return tuple(boxCoords)
 
 '''
 Create intial solution where numbers 1-9 are in each 3x3 box only once each 
@@ -61,10 +61,11 @@ class SudokuSolve(Annealer):
     def move(self):
         boxNum = random.randrange(9)
         boxCoords = getBox(boxNum)
-        changeableCells = [i for i in boxCoords if board[i[0]][i[1]] == 0]
+        changeableCells = [i for i in boxCoords if board[tuple(i)] == 0]
         a = random.sample(changeableCells, 1)
         b = random.sample(changeableCells, 1)
         self.state[a[0][0]][a[0][1]], self.state[b[0][0]][b[0][1]] = self.state[b[0][0]][b[0][1]] , self.state[a[0][0]][a[0][1]]
+        #self.state[tuple(a)], self.state[tuple(b)] = self.state[tuple(b)] , self.state[tuple(a)]
         self.counter += 1
 
     '''Calculate number of errors in solution'''
@@ -78,16 +79,24 @@ class SudokuSolve(Annealer):
                 colSet.add(self.state[y][x])
 
             score += (9 - len(rowSet))
-            score += (9 - len(colSet))         
+            score += (9 - len(colSet))     
+
+        #print(score)    
 
         if(score == 0):
+            print("run")
             self.user_exit = True
 
         return score
 
 def runAlgorithm(board):
-    sudoku = SudokuSolve(board)
-    print
+    print("simannealing Board: ", board)
+
+    print("id2 ", id(board))
+    
+    boardNew = np.copy(board)
+
+    sudoku = SudokuSolve(boardNew)
     sudoku.copy_strategy = "method"
 
     sudoku.Tmax = 0.5
@@ -98,6 +107,8 @@ def runAlgorithm(board):
     start = datetime.datetime.now()
     state, e = sudoku.anneal()
     end = datetime.datetime.now()
+    print("\n")
+    print(state)
 
     timeTaken = end - start
 
@@ -106,9 +117,14 @@ def runAlgorithm(board):
     return timeOutput, sudoku.counter
 
 
-
-
 if __name__ == "__main__":
-    board = np.array([[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]])
+    #board = np.array([[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]])
+    #board = [[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]]
 
+    #board = np.array([[7, 5, 6, 0, 1, 0, 0, 4, 9], [0, 0, 0, 0, 9, 4, 0, 8, 0], [0, 9, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 1, 2, 0, 0], [3, 0, 8, 0, 2, 0, 0, 1, 5], [2, 0, 0, 9, 7, 3, 4, 6, 0], [0, 6, 0, 1, 0, 8, 0, 9, 0], [4, 8, 0, 2, 0, 0, 1, 0, 0], [9, 0, 0, 3, 0, 0, 0, 0, 0]])
+
+    board = np.array([[0, 0, 0, 7, 0, 8, 0, 0, 3], [0, 0, 0, 0, 5, 0, 0, 0, 0], [0, 6, 3, 4, 9, 0, 0, 5, 7], [0, 3, 1, 0, 0, 2, 0, 0, 0], [9, 0, 8, 0, 0, 7, 0, 6, 5], [6, 5, 0, 0, 0, 4, 0, 1, 0], [0, 0, 9, 0, 0, 0, 0, 0, 0], [0, 0, 6, 1, 3, 0, 0, 0, 9], [5, 0, 0, 0, 7, 0, 8, 3, 0]])
+
+    print(board)
+    
     runAlgorithm(board)

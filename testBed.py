@@ -42,27 +42,46 @@ def difficultySelection():
 
 class Board:
     def __init__(self):
-        self.board = []
+        self.board = np.zeros((9,9), dtype=int)
         self.numLines = 0
         cur_path = os.path.dirname(__file__)
         rel_path = "puzzles/puzzles.txt"
         self.abs_file_path = os.path.join(cur_path, rel_path)
         #on initialisation of board, pick board based on difficulty of board selected 
 
-    def getBoard(self, boardNum):
+    def getBoardfromFile(self, boardNum):
 
         with open(self.abs_file_path) as fp:
             lines = fp.readlines()
 
-        self.formatBoard(lines[boardNum])
+        return lines[boardNum]
 
 
     def formatBoard(self, stringBoard):
         arrayStrip = stringBoard.strip()
         arraySplit = arrayStrip.split(",")
         intArray = [int(i) for i in arraySplit]
+
+        temp = [intArray[r*9:(r+1)*9] for r in range(0,9)]
+
+        tempBoard = np.array(temp)
+
+        return tempBoard
+
+        #print(temp)
+
+
+        #temp = np.reshape(intArray, (9,9))
+        #self.board = list(temp)
+
+        #print(intArray)
         
-        self.board = np.reshape(intArray, (9,9))
+        #self.board = np.reshape(intArray, (9,9))
+
+    def getBoard(self,boardNumber):
+        board = self.getBoardfromFile(boardNumber)
+        newBoard = self.formatBoard(board)
+        return newBoard
 
 
     
@@ -75,9 +94,9 @@ class Board:
 
         #loop for each algorithm that wants to be run on board 
         for x in range(self.numLines):
-            self.getBoard(x)
-            #print(x)
-            #print(self.board)
+            newBoard = self.getBoard(x)
+            print("id ", id(newBoard))
+            print("testBed Board: ", newBoard)
 
             #each algorithm file should have runAlgorithm file 
             #result: a tuple of time taken and passes made by algorithm
@@ -86,7 +105,7 @@ class Board:
             if(algorithm == "1"):
                 result = algorithms.backtracking.runAlgorithm(self.board)
             elif(algorithm == "2"):
-                result = algorithms.simannealing.runAlgorithm(self.board)
+                result = algorithms.simannealing.runAlgorithm(newBoard)
             elif(algorithm == "3"):
                 pass
                 #result = algorithms.genetic.runAlgorithm(self.board)

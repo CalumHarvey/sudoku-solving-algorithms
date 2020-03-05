@@ -180,7 +180,7 @@ def runAlgorithm():
     #lines = f.readlines()
     #f.close()  
 
-    numPuzzles = 10 
+    numPuzzles = 1 
 
     for x in range(numPuzzles):
 
