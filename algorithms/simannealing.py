@@ -5,8 +5,6 @@ from simanneal import Annealer
 import datetime
 
 
-board = [[0, 0, 2, 1, 0, 0, 0, 0, 0], [7, 1, 0, 6, 0, 0, 0, 4, 0], [5, 0, 0, 9, 0, 3, 0, 0, 1], [2, 0, 0, 8, 0, 0, 0, 9, 3], [0, 8, 0, 0, 0, 0, 0, 1, 0], [9, 5, 0, 0, 0, 1, 0, 0, 4], [3, 0, 0, 4, 0, 9, 0, 0, 8], [0, 9, 0, 0, 0, 2, 0, 7, 6], [0, 0, 0, 0, 0, 7, 4, 0, 0]]
-
 '''
 get initial solution - 1-9 in each 3x3 box: can then check rows and columns to ensure correct solution
 get intial temperature
@@ -27,7 +25,7 @@ def getBox(boxNum):
 
     boxCoords = [[firstRow+i, firstCol+j] for i in range(3) for j in range(3)]
 
-    return tuple(boxCoords)
+    return boxCoords
 
 '''
 Create intial solution where numbers 1-9 are in each 3x3 box only once each 
@@ -61,7 +59,7 @@ class SudokuSolve(Annealer):
     def move(self):
         boxNum = random.randrange(9)
         boxCoords = getBox(boxNum)
-        changeableCells = [i for i in boxCoords if board[tuple(i)] == 0]
+        changeableCells = [i for i in boxCoords if self.board[i[0]][i[1]] == 0]
         a = random.sample(changeableCells, 1)
         b = random.sample(changeableCells, 1)
         self.state[a[0][0]][a[0][1]], self.state[b[0][0]][b[0][1]] = self.state[b[0][0]][b[0][1]] , self.state[a[0][0]][a[0][1]]
@@ -79,20 +77,14 @@ class SudokuSolve(Annealer):
                 colSet.add(self.state[y][x])
 
             score += (9 - len(rowSet))
-            score += (9 - len(colSet))     
-
-        #print(score)    
+            score += (9 - len(colSet))       
 
         if(score == 0):
-            print("run")
             self.user_exit = True
 
         return score
 
 def runAlgorithm(board):
-    print("simannealing Board: ", board)
-
-    print("id2 ", id(board))
     
     boardNew = np.copy(board)
 
@@ -107,8 +99,6 @@ def runAlgorithm(board):
     start = datetime.datetime.now()
     state, e = sudoku.anneal()
     end = datetime.datetime.now()
-    print("\n")
-    print(state)
 
     timeTaken = end - start
 

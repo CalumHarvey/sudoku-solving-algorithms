@@ -16,7 +16,6 @@ import numpy as np
 import copy
 import os
 
-counter = 0
 
 class sudokuGen:
     def __init__(self, grid):
@@ -134,12 +133,7 @@ class sudokuGen:
 
 
     def main(self, grid):
-        # 5 = very easy
-        # 15 = easy
-        # 30 = easy
-        # 100 = hard
-        # 50 = very easy
-        # 75 = very easy
+
         attempts = 5
         asc = [1,2,3,4,5,6,7,8,9]
         desc = [9,8,7,6,5,4,3,2,1]
@@ -168,7 +162,9 @@ class sudokuGen:
 
 
 
-def runAlgorithm():
+def runAlgorithm(numPuzzles):
+    global x
+    x=0
 
     boards = []
 
@@ -176,13 +172,8 @@ def runAlgorithm():
     rel_path = "puzzles/puzzles.txt"
     abs_file_path = os.path.join(cur_path, rel_path)
 
-    #f = open(abs_file_path, "r")
-    #lines = f.readlines()
-    #f.close()  
-
-    numPuzzles = 1 
-
     for x in range(numPuzzles):
+
 
         print(x)
 
@@ -212,11 +203,6 @@ def runAlgorithm():
         f.write(line + "\n")
     f.close()
 
-
-        #print(finishedGrid)
-
-    # timetaken returns 0 - algorithm too quick
-    # number of passes returns 0 ????
 
 
 if __name__ == "__main__":
