@@ -4,19 +4,6 @@ import numpy as np
 from simanneal import Annealer
 import datetime
 
-
-'''
-get initial solution - 1-9 in each 3x3 box: can then check rows and columns to ensure correct solution
-get intial temperature
-loop end 2
-loop start
-generate neighbouring solution
-check intial solution cost vs neighbouring solution cost
-swap if new solution is better or if worse but temperature high enough
-loop end
-
-reduce temperature and loop start 2
-'''
 # Given box number from 0-8 return the a list of the coordinates of the box  
 def getBox(boxNum):
     

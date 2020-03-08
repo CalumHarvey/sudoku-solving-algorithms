@@ -7,32 +7,14 @@ import random
 from simanneal import Annealer
 import datetime
 from tkinter import *
+import matplotlib.pyplot as plt
+import math
 
 
 # create dictionaries for results
 timeDict = {}
 passesDict = {}
-algorithms = []
-
-
-# Selection of algorithm - use use input from user (give each algorithm a number 1-6)
-# how many algorithms to compare?
-# which algorithms are going to be compared (use numbers??)
-# return list of algorithms that are going to be compared
-'''
-def algorithmSelection():
-    selectionAlgorithm = "0"
-    algorithms = []
-
-    print("Type 1 for backtracking")
-    print("Type 2 for simannealing")
-    print("Type 3 for Genetic")
-
-    selectionAlgorithm = input("Select one algorithm: ")
-    algorithms.append(selectionAlgorithm)
-
-    return algorithms
-'''
+algorithmList = []
 
 def difficultySelection():
 
@@ -92,11 +74,11 @@ class Board:
             # result: a tuple of time taken and passes made by algorithm
             result = (0, 0)
 
-            if(algorithm == "1"):
+            if(algorithm == 1):
                 result = algorithms.backtracking.runAlgorithm(self.board)
-            elif(algorithm == "2"):
+            elif(algorithm == 2):
                 result = algorithms.simannealing.runAlgorithm(newBoard)
-            elif(algorithm == "3"):
+            elif(algorithm == 3):
                 pass
                 #result = algorithms.genetic.runAlgorithm(self.board)
 
@@ -117,27 +99,14 @@ class Analysis:
 
     def runAllAlgorithms(self, algorithmList):
         for x in algorithmList:
+            resultsTemp = []
             results = self.b.runAlgorithm(x)
             print("results: ", results[0], results[1])
-            self.timeArray.append(results[0])
+            for i in results[0]:
+                resultsTemp.append(float("{0:.3f}".format(i)))
+            self.timeArray.append(resultsTemp)
             self.passesArray.append(results[1])
 
-    # can only test after implementing algorithms
-    def timeComparison(self,algorithmList):
-        for x in range(len(self.timeArray)):
-            print("Time for Algorithm", algorithmList[x])
-            print("Raw Data: ", self.timeArray[x])
-            print("Mean: ", statistics.mean(self.timeArray[x]))
-
-        # compare time that algorithms took to solve board to each other
-
-    def passesComparison(self, algorithmList):
-        for x in range(len(self.passesArray)):
-            print("Passes for Algorithm", algorithmList[x])
-            print("Raw Data: ", self.passesArray[x])
-            print("Mean: ", statistics.mean(self.passesArray[x]))
-
-        # compare number of passes to solve board to each othe
 
 
 class UI:
@@ -223,23 +192,40 @@ class UI:
         algorithmDict = {1 : "Backtracking", 2 : "Simulated Annealing", 3 : "Genetic"}
         display = Tk()
 
+        fig, (ax1,ax2) = plt.subplots(2,1, figsize = (12,8))
+        i = np.arange(1,11)
+        print("i", i)
+
         for x in range(len(algorithmList)):
-            l1 = Label(display, text=algorithmDict.get(x+1))
+            l1 = Label(display, text=algorithmDict.get(x+1), font=("Ariel", 15))
             l1.grid(row=0,column=x,sticky = W, pady = 2)
-            l2 = Label(display, text="Times")
+            l2 = Label(display, text="Times", font=("Ariel", 12))
             l2.grid(row=1, column=x,sticky = W, pady = 2)
             l3 = Label(display, text="Raw Data: " + str(times[x]))
             l3.grid(row=2, column=x,sticky = W, pady = 2)
-            l4 = Label(display, text="Mean: " + str(statistics.mean(times[x])))
+            temp = float("{0:.2f}".format(statistics.mean(times[x])))
+            l4 = Label(display, text="Mean: " + str(temp) + "s")
             l4.grid(row=3, column=x,sticky = W, pady = 2)
 
-            l5 = Label(display, text="Passes")
+            l5 = Label(display, text="Passes", font=("Ariel", 12))
             l5.grid(row=5, column=x,sticky = W, pady = 2)
             l6 = Label(display, text="Raw Data: " + str(passes[x]))
             l6.grid(row=6, column=x,sticky = W, pady = 2)
-            l7 = Label(display, text="Mean: " + str(statistics.mean(passes[x])))
+            temp = float("{0:.2f}".format(statistics.mean(passes[x])))
+            l7 = Label(display, text="Mean: " + str(temp) + " passes")
             l7.grid(row=7, column=x,sticky = W, pady = 2)
         
+            npArrayTime = np.array(times[x])
+            ax1.plot(i, npArrayTime, marker = '*', label = algorithmDict.get(x+1))
+            ax1.set_title('Times')
+
+            npArrayPasses = np.array(passes[x])
+            ax2.plot(i, npArrayPasses, marker = "*", label = algorithmDict.get(x+1))
+            ax2.set_title("Passes")
+        
+        plt.legend()
+        plt.show()
+
         display.mainloop()
 
 
@@ -247,12 +233,6 @@ class UI:
             
 
 def main():
-    '''
-    a = Analysis()
-    a.runAllAlgorithms()
-    a.timeComparison()
-    a.passesComparison()
-    '''
     UIinit = UI()
     UIinit.userInterface()
 
