@@ -62,10 +62,10 @@ genome.evaluator.set(errors) #sets fitness function to errors
 genome.setParams(bestrawscore=0.00, rounddecimal=2)
 ga = GSimpleGA.GSimpleGA(genome)
 ga.setMinimax(Consts.minimaxType["minimize"]) #0 errors wanted
-ga.setMutationRate(0.04)
+ga.setMutationRate(0.06)
 ga.setGenerations(10000)
 ga.setPopulationSize(200)
-ga.setCrossoverRate(1)
+ga.setCrossoverRate(1.0)
 ga.setElitismReplacement(5)
 ga.terminationCriteria.set(GSimpleGA.RawScoreCriteria)
 ga.evolve(freq_stats=10)

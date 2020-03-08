@@ -16,15 +16,6 @@ timeDict = {}
 passesDict = {}
 algorithmList = []
 
-def difficultySelection():
-
-    print("Select difficulty")
-
-    #difficultySelection = input()
-    difficultySelection = "1"
-
-    return difficultySelection
-
 
 class Board:
     def __init__(self):
@@ -82,8 +73,6 @@ class Board:
                 pass
                 #result = algorithms.genetic.runAlgorithm(self.board)
 
-            print(result[0])
-            print(result[1])
             # results added to dictionary with algorithm as key and result as value
             timeArray.append(result[0])
             passesArray.append(result[1])
@@ -101,7 +90,6 @@ class Analysis:
         for x in algorithmList:
             resultsTemp = []
             results = self.b.runAlgorithm(x)
-            print("results: ", results[0], results[1])
             for i in results[0]:
                 resultsTemp.append(float("{0:.3f}".format(i)))
             self.timeArray.append(resultsTemp)
@@ -181,8 +169,6 @@ class UI:
         if(self.genetic.get() == True):
             algorithmList.append(3)
         
-        print(self.backtracking)
-        print(algorithmList)
         a = Analysis()
         a.runAllAlgorithms(algorithmList)
 
@@ -194,7 +180,6 @@ class UI:
 
         fig, (ax1,ax2) = plt.subplots(2,1, figsize = (12,8))
         i = np.arange(1,11)
-        print("i", i)
 
         for x in range(len(algorithmList)):
             l1 = Label(display, text=algorithmDict.get(x+1), font=("Ariel", 15))
@@ -230,14 +215,11 @@ class UI:
 
 
 
-            
-
-def main():
+if __name__ == "__main__":
+    
     UIinit = UI()
-    UIinit.userInterface()
+    UIinit.userInterface()          
 
-
-main()
 
 
 # Generation of board - potentially use pre-existing boards for initial design and potentially write creation algorithm at the end
