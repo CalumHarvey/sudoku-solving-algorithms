@@ -196,6 +196,8 @@ def runAlgorithm(numPuzzles):
     for x in range(numPuzzles):
         #Loop for the number of puzzles being created
 
+        print(x)
+
         #Create empty 9x9 grid
         grid = []
         grid.append([0, 0, 0, 0, 0, 0, 0, 0, 0])
