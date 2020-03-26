@@ -1,7 +1,11 @@
 import random
 import numpy as np
-from simanneal import Annealer
-import datetime
+
+'''
+Hill climb involves moving towards the correct solution each time like climbing a hill to each the top
+Since it always tries to improve it can get into local minimums, this is common in sudoku so there needs to be a restart ability if too many iterations are taken.
+'''
+
 
 def getBox(boxNum):
     ''' Given box number from 0-8 return a list of the coordinates of the box '''
@@ -17,11 +21,9 @@ def getBox(boxNum):
 
 def intialSolution(board):
     ''' Create intial solution where numbers 1-9 are in each 3x3 box only once each '''
-    
     populatedBoard = board.copy()
     #For each box number 1-9...
     for boxNum in range(9):
-        
         #Get box coordinates
         boxCoords = getBox(boxNum)
         
@@ -36,108 +38,122 @@ def intialSolution(board):
         toFillValues = [i for i in range(1,10) if i not in values]
         random.shuffle(toFillValues)
         fillCounter = 0
-        
         #For each coordinate with a 0 in it...
         for x in zeroCoords:
-           
             #fill board with numbers not currently in the board where there is currently a 0
             populatedBoard[x[0]][x[1]] = toFillValues[fillCounter]
             fillCounter += 1
 
     return populatedBoard
 
-class SudokuSolve(Annealer):
-    ''' Initialisation of sudoku solver for Simulated Annealing '''
-    def __init__(self, board):
-        self.board = board
-        self.counter = 0
-        
-        #Get intial solution
-        state = intialSolution(board)
-        
-        #call super class of simulated annealing
-        super().__init__(state)
 
-    def move(self):
-        '''Swap 2 cells within a single 3x3 box randomly'''
+class hillClimb:
+    def __init__(self, puzzle):
+        self.currentState = np.zeros((9,9))
+        self.solutionState = np.zeros((9,9))
+        self.iterations = 0
+        self.intialState = np.array(puzzle)
 
-        #Get random box number and get list of coordinates in that box
-        boxNum = random.randrange(9)
-        boxCoords = getBox(boxNum)
 
-        #Get list of cells in box that are not in original board and can be changed
-        changeableCells = [i for i in boxCoords if self.board[i[0]][i[1]] == 0]
+    def solve(self):
+
+        while True:
+            #input()
+            self.iterations = 0
+            self.currentState = intialSolution(self.intialState)
+
+            solutionState = self.climb(self.currentState)
+            print("out of loop")
+
+            self.currentState = solutionState
+
+            if(self.energy(self.currentState) == 0):
+                print("run")
+                break
         
-        #Pick 2 random coordinates from the list of changeable cells
-        a = random.sample(changeableCells, 1)
-        b = random.sample(changeableCells, 1)
-        
-        #Swap values of 2 random coordinates
-        self.state[a[0][0]][a[0][1]], self.state[b[0][0]][b[0][1]] = self.state[b[0][0]][b[0][1]] , self.state[a[0][0]][a[0][1]]
-        self.counter += 1
+        return solutionState
 
-    def energy(self):
+
+
+    def energy(self, puzzle):
         '''Calculate number of errors in solution'''
-        
         score = 0
-        
         #For each row 1-9...
         for x in range(9):
-            
             #Intialise sets
             rowSet = set()
             colSet = set()
-            
             #For each value in row...
             for y in range(9):
-                
                 #Add numbers from each row into rowSet and numbers in columns into colSet
-                rowSet.add(self.state[x][y])
-                colSet.add(self.state[y][x])
+                rowSet.add(puzzle[x][y])
+                colSet.add(puzzle[y][x])
+            
+            #print("lenRow", len(rowSet))
+            #print("lenCol", len(colSet))
 
             #Add to score the number of values in each row and column that is less than 9 (all the values)
             score += (9 - len(rowSet))
             score += (9 - len(colSet))       
 
         #if score is 0 then solution is found, exit the program
-        if(score == 0):
-            self.user_exit = True
 
         return score
 
-def runAlgorithm(board):
-    ''' Initialise and run algorithm for Simulated Annealing ''' 
 
-    boardNew = np.copy(board)
+    def climb(self, oldState):
 
-    sudoku = SudokuSolve(boardNew)
-    sudoku.counter = 0
-    
-    sudoku.copy_strategy = "method"
+        nextState = np.copy(oldState)
+            
+        boxNum = random.randrange(0,8)
 
-    #Initialise the variables for simulated annealing
-    sudoku.Tmax = 0.5
-    sudoku.Tmin = 0.05
-    sudoku.steps = 700000
-    sudoku.updates = 1000
+        boxCoords = getBox(boxNum)
 
-    #Start timer 
-    start = datetime.datetime.now()
-    #Run algorithm
-    state, e = sudoku.anneal()
-    #End timer
-    end = datetime.datetime.now()
+        #changeableCells = [i for i in boxCoords if self.intialState[i[0]][i[1]] == 0]
+        changeableCells = []
+        for i in boxCoords:
+            if (self.intialState[i[0]][i[1]] == 0):
+                changeableCells.append(i)
+        
+        #Pick 2 random coordinates from the list of changeable cells
+        a = random.sample(changeableCells, 1)
+        b = random.sample(changeableCells, 1)
+        
+        #Swap values of 2 random coordinates
+        #nextState[a[0]], nextState[b[0]] = nextState[b[0]] , nextState[a[0]]
+        temp = nextState[a[0][0]][a[0][1]]
+        nextState[a[0][0]][a[0][1]] = nextState[b[0][0]][b[0][1]]
+        nextState[b[0][0]][b[0][1]] = temp
 
-    #Calculated time taken for algorithm to run
-    timeTaken = end - start
+        #print("current state", self.currentState)
+        #print("neighbour state", nextState)
 
-    #Turn time time taken into seconds
-    timeOutput = (timeTaken.total_seconds())
+        nextStateError = self.energy(nextState)
 
-    print("\n", state)
+        currentError = self.energy(oldState)
 
-    #Return tuple of time taken and the number of passes
-    return timeOutput, sudoku.counter
+        print("neighbour error ", nextStateError)
+        print("current error ", currentError)
+        print("iterations", self.iterations)
+        #print(nextStateError >= currentError)
+        #input()
+
+
+        self.iterations += 1
+
+        if(self.iterations == 200):
+            return oldState
+
+        if(nextStateError == 0):
+            print("error 0")
+            #return nextState
+        elif(nextStateError >= currentError):
+            #print("neighbour worse")
+            return self.climb(oldState)
+        else:
+            #print("neighbour better")
+            return self.climb(nextState)
+
 
 
 if __name__ == "__main__":
@@ -147,7 +163,23 @@ if __name__ == "__main__":
     #board = np.array([[7, 5, 6, 0, 1, 0, 0, 4, 9], [0, 0, 0, 0, 9, 4, 0, 8, 0], [0, 9, 0, 0, 0, 0, 0, 0, 1], [0, 0, 0, 0, 0, 1, 2, 0, 0], [3, 0, 8, 0, 2, 0, 0, 1, 5], [2, 0, 0, 9, 7, 3, 4, 6, 0], [0, 6, 0, 1, 0, 8, 0, 9, 0], [4, 8, 0, 2, 0, 0, 1, 0, 0], [9, 0, 0, 3, 0, 0, 0, 0, 0]])
 
     board = np.array([[0, 0, 0, 7, 0, 8, 0, 0, 3], [0, 0, 0, 0, 5, 0, 0, 0, 0], [0, 6, 3, 4, 9, 0, 0, 5, 7], [0, 3, 1, 0, 0, 2, 0, 0, 0], [9, 0, 8, 0, 0, 7, 0, 6, 5], [6, 5, 0, 0, 0, 4, 0, 1, 0], [0, 0, 9, 0, 0, 0, 0, 0, 0], [0, 0, 6, 1, 3, 0, 0, 0, 9], [5, 0, 0, 0, 7, 0, 8, 3, 0]])
-
-    print(board)
     
-    runAlgorithm(board)
+    a = hillClimb(board)
+
+    solvedBoard = a.solve()
+
+    print(solvedBoard)
+
+
+
+
+             
+
+
+
+
+
+
+
+
+
