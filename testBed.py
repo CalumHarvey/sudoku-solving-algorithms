@@ -44,6 +44,7 @@ class Board:
 
         return tempBoard
 
+
     def getBoard(self, boardNumber):
         board = self.getBoardfromFile(boardNumber)
         newBoard = self.formatBoard(board)
@@ -60,18 +61,21 @@ class Board:
         # loop for each algorithm that wants to be run on board
         for x in range(self.numLines):
             newBoard = self.getBoard(x)
+            print(x)
 
             # each algorithm file should have runAlgorithm file
             # result: a tuple of time taken and passes made by algorithm
             result = (0, 0)
 
             if(algorithm == 1):
-                result = algorithms.backtracking.runAlgorithm(self.board)
+                result = algorithms.backtracking.runAlgorithm(newBoard)
             elif(algorithm == 2):
                 result = algorithms.simannealing.runAlgorithm(newBoard)
             elif(algorithm == 3):
                 pass
-                #result = algorithms.genetic.runAlgorithm(self.board)
+                #result = algorithms.genetic.runAlgorithm(newBoard)
+            elif(algorithm == 4):
+                result = algorithms.hillClimb.runAlgorithm(newBoard)
 
             # results added to dictionary with algorithm as key and result as value
             timeArray.append(result[0])
@@ -103,6 +107,7 @@ class UI:
         self.backtracking = BooleanVar()
         self.simAnneal = BooleanVar()
         self.genetic = BooleanVar()
+        self.hillClimb = BooleanVar()
 
         self.puzzleNumber = IntVar()
 
@@ -136,6 +141,8 @@ class UI:
         simAnnealButton.place(x=self.firstColumn, y=self.firstRow+(30*2))
         geneticButton = Checkbutton(frame, text="Genetic", variable=self.genetic, onvalue=1, offvalue=0)
         geneticButton.place(x=self.firstColumn, y=self.firstRow+(30*3))
+        hillClimbButton = Checkbutton(frame, text="Hill Climb", variable=self.hillClimb, onvalue=1, offvalue=0)
+        hillClimbButton.place(x=self.firstColumn, y=self.firstRow+(30*4))
 
 
         tenPuzzlesButton = Radiobutton(frame, text="10", variable=self.puzzleNumber, value=10)
@@ -144,13 +151,13 @@ class UI:
         hundredPuzzlesButton.place(x=self.secondColumn, y=self.firstRow+(30*2))
         thousandPuzzleButton = Radiobutton(frame, text="1000", variable=self.puzzleNumber, value=1000)
         thousandPuzzleButton.place(x=self.secondColumn, y=self.firstRow+(30*3))
-        self.puzzleNumber.set(10)
+        self.puzzleNumber.set(getLines())
 
         genButton = Button(frame, text="Generate Boards", width=14, relief=GROOVE, command= lambda: self.generationSelection(self.puzzleNumber))
         genButton.place(x=self.secondColumn, y=self.firstRow+(30*4)+10)
 
         runAlgorithmButton = Button(frame, text="Run Algorithm", width=14, relief=GROOVE, command= lambda: self.algorithmSelection())
-        runAlgorithmButton.place(x=self.firstColumn, y=self.firstRow+(30*4)+10)
+        runAlgorithmButton.place(x=self.firstColumn, y=self.firstRow+(30*5)+10)
 
         self.menu.mainloop()
 
@@ -168,6 +175,8 @@ class UI:
             algorithmList.append(2)
         if(self.genetic.get() == True):
             algorithmList.append(3)
+        if(self.hillClimb.get() == True):
+            algorithmList.append(4)
         
         a = Analysis()
         a.runAllAlgorithms(algorithmList)
@@ -175,14 +184,20 @@ class UI:
         self.displayAnalysis(a.timeArray, a.passesArray, algorithmList)
     
     def displayAnalysis(self, times, passes, algorithmList):
-        algorithmDict = {1 : "Backtracking", 2 : "Simulated Annealing", 3 : "Genetic"}
+        algorithmDict = {1 : "Backtracking", 2 : "Simulated Annealing", 3 : "Genetic", 4 : "Hill Climb"}
         display = Tk()
+        sizex = 800
+        sizey = 200
+        posx  = 100
+        posy  = 100
+        display.wm_geometry("%dx%d+%d+%d" % (sizex, sizey, posx, posy))
 
         fig, (ax1,ax2) = plt.subplots(2,1, figsize = (12,8))
-        i = np.arange(1,11)
+        i = np.arange(1,self.puzzleNumber.get() + 1)
 
         for x in range(len(algorithmList)):
-            l1 = Label(display, text=algorithmDict.get(x+1), font=("Ariel", 15))
+            print(algorithmDict.get(algorithmList[x]))
+            l1 = Label(display, text=algorithmDict.get(algorithmList[x]), font=("Ariel", 15))
             l1.grid(row=0,column=x,sticky = W, pady = 2)
             l2 = Label(display, text="Times", font=("Ariel", 12))
             l2.grid(row=1, column=x,sticky = W, pady = 2)
@@ -201,17 +216,26 @@ class UI:
             l7.grid(row=7, column=x,sticky = W, pady = 2)
         
             npArrayTime = np.array(times[x])
-            ax1.plot(i, npArrayTime, marker = '*', label = algorithmDict.get(x+1))
+            ax1.plot(i, npArrayTime, marker = '*', label = algorithmDict.get(algorithmList[x]))
             ax1.set_title('Times')
 
             npArrayPasses = np.array(passes[x])
-            ax2.plot(i, npArrayPasses, marker = "*", label = algorithmDict.get(x+1))
+            ax2.plot(i, npArrayPasses, marker = "*", label = algorithmDict.get(algorithmList[x]))
             ax2.set_title("Passes")
         
         plt.legend()
         plt.show()
 
         display.mainloop()
+
+
+'''Helper function for getting numbe of lines'''
+def getLines():
+    cur_path = os.path.dirname(__file__)
+    rel_path = "puzzles/puzzles.txt"
+    abs_file_path = os.path.join(cur_path, rel_path)
+
+    return sum(1 for line in open(abs_file_path))
 
 
 

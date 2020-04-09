@@ -1,5 +1,7 @@
 import random
 import numpy as np
+import time
+import datetime
 
 '''
 Hill climb involves moving towards the correct solution each time like climbing a hill to each the top
@@ -53,12 +55,13 @@ class hillClimb:
         self.solutionState = np.zeros((9,9))
         self.iterations = 0
         self.intialState = np.array(puzzle)
+        self.passes = 0
 
 
     def solve(self):
 
         while True:
-            #input()
+
             self.iterations = 0
             self.currentState = intialSolution(self.intialState)
 
@@ -69,6 +72,8 @@ class hillClimb:
 
             if(self.energy(self.currentState) == 0):
                 print("run")
+                break
+            if(self.passes > 30000):
                 break
         
         return solutionState
@@ -132,13 +137,15 @@ class hillClimb:
 
         currentError = self.energy(oldState)
 
-        print("neighbour error ", nextStateError)
-        print("current error ", currentError)
-        print("iterations", self.iterations)
+        #print("neighbour error ", nextStateError)
+        #print("current error ", currentError)
+        #print("iterations", self.iterations)
         #print(nextStateError >= currentError)
         #input()
+        print(self.passes)
 
 
+        self.passes += 1
         self.iterations += 1
 
         if(self.iterations == 200):
@@ -153,6 +160,25 @@ class hillClimb:
         else:
             #print("neighbour better")
             return self.climb(nextState)
+
+def runAlgorithm(board):
+    a = hillClimb(np.array(board))
+
+
+    start = datetime.datetime.now()
+
+    solvedBoard = a.solve()
+
+    end = datetime.datetime.now()
+
+    #Calculate the time taken for the algorithm to run
+    timeTaken = end - start
+
+    #Change timer to show seconds
+    timeOutput = (timeTaken.total_seconds())
+
+    return timeOutput, a.passes
+
 
 
 

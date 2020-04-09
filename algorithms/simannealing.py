@@ -134,8 +134,6 @@ def runAlgorithm(board):
     #Turn time time taken into seconds
     timeOutput = (timeTaken.total_seconds())
 
-    print("\n", state)
-
     #Return tuple of time taken and the number of passes
     return timeOutput, sudoku.counter
 
