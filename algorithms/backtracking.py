@@ -39,8 +39,8 @@ class backtracking:
 
 
     def usedInCol(self, board, col, num):
-    #Inputs: puzzle board, current column, number trying to be added
-    #Checks each number in the column for the number trying to be added
+        #Inputs: puzzle board, current column, number trying to be added
+        #Checks each number in the column for the number trying to be added
         for row in range(9):
             if(self.board[row][col] == num):
                 return True
@@ -48,8 +48,8 @@ class backtracking:
 
 
     def usedInBox(self, board, boxStartRow, boxStartCol, num):
-    #Input: puzzle board, coordinate of the start of the 3x3 box, number trying to be added
-    #Checks each number in the 3x3 box for the number trying to be added
+        #Input: puzzle board, coordinate of the start of the 3x3 box, number trying to be added
+        #Checks each number in the 3x3 box for the number trying to be added
         for row in range(3):
             for col in range(3):
                 if(self.board[row+boxStartRow][col+boxStartCol] == num):
@@ -95,12 +95,13 @@ class backtracking:
 def runAlgorithm(board):
     #Input: board to be solved
 
-    #Initalise passes counter
-    #solveSudoku.counter = 0
     #Turn input board into a numpy array
     newBoard = np.array(board)
 
     sudoku = backtracking(newBoard)
+    
+    #Initalise passes counter
+    #solveSudoku.counter = 0
     sudoku.counter = 0
 
     #Take the time before and after the solve algorithm is run

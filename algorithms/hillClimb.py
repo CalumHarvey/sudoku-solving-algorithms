@@ -66,12 +66,10 @@ class hillClimb:
             self.currentState = intialSolution(self.intialState)
 
             solutionState = self.climb(self.currentState)
-            print("out of loop")
 
             self.currentState = solutionState
 
             if(self.energy(self.currentState) == 0):
-                print("run")
                 break
             if(self.passes > 30000):
                 break
@@ -93,9 +91,6 @@ class hillClimb:
                 #Add numbers from each row into rowSet and numbers in columns into colSet
                 rowSet.add(puzzle[x][y])
                 colSet.add(puzzle[y][x])
-            
-            #print("lenRow", len(rowSet))
-            #print("lenCol", len(colSet))
 
             #Add to score the number of values in each row and column that is less than 9 (all the values)
             score += (9 - len(rowSet))
@@ -125,23 +120,15 @@ class hillClimb:
         b = random.sample(changeableCells, 1)
         
         #Swap values of 2 random coordinates
-        #nextState[a[0]], nextState[b[0]] = nextState[b[0]] , nextState[a[0]]
         temp = nextState[a[0][0]][a[0][1]]
         nextState[a[0][0]][a[0][1]] = nextState[b[0][0]][b[0][1]]
         nextState[b[0][0]][b[0][1]] = temp
 
-        #print("current state", self.currentState)
-        #print("neighbour state", nextState)
 
         nextStateError = self.energy(nextState)
 
         currentError = self.energy(oldState)
 
-        #print("neighbour error ", nextStateError)
-        #print("current error ", currentError)
-        #print("iterations", self.iterations)
-        #print(nextStateError >= currentError)
-        #input()
         print(self.passes)
 
 
@@ -152,13 +139,10 @@ class hillClimb:
             return oldState
 
         if(nextStateError == 0):
-            print("error 0")
-            #return nextState
+            return nextState
         elif(nextStateError >= currentError):
-            #print("neighbour worse")
             return self.climb(oldState)
         else:
-            #print("neighbour better")
             return self.climb(nextState)
 
 def runAlgorithm(board):

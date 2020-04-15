@@ -51,10 +51,8 @@ class SudokuSolve(Annealer):
     def __init__(self, board):
         self.board = board
         self.counter = 0
-        
         #Get intial solution
         state = intialSolution(board)
-        
         #call super class of simulated annealing
         super().__init__(state)
 

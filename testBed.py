@@ -24,7 +24,6 @@ class Board:
         cur_path = os.path.dirname(__file__)
         rel_path = "puzzles/puzzles.txt"
         self.abs_file_path = os.path.join(cur_path, rel_path)
-        # on initialisation of board, pick board based on difficulty of board selected
 
     def getBoardfromFile(self, boardNum):
 
@@ -137,11 +136,11 @@ class UI:
 
         backtrackingButton = Checkbutton(frame, text="Backtracking", variable=self.backtracking, onvalue=1, offvalue=0)
         backtrackingButton.place(x=self.firstColumn, y=self.firstRow+(30*1))
-        simAnnealButton = Checkbutton(frame, text="Simulated Annealing", variable=self.simAnneal, onvalue=1, offvalue=0)
+        simAnnealButton = Checkbutton(frame, text="Hill Climb", variable=self.hillClimb, onvalue=1, offvalue=0)
         simAnnealButton.place(x=self.firstColumn, y=self.firstRow+(30*2))
         geneticButton = Checkbutton(frame, text="Genetic", variable=self.genetic, onvalue=1, offvalue=0)
         geneticButton.place(x=self.firstColumn, y=self.firstRow+(30*3))
-        hillClimbButton = Checkbutton(frame, text="Hill Climb", variable=self.hillClimb, onvalue=1, offvalue=0)
+        hillClimbButton = Checkbutton(frame, text="Simulated Annealing", variable=self.simAnneal, onvalue=1, offvalue=0)
         hillClimbButton.place(x=self.firstColumn, y=self.firstRow+(30*4))
 
 
@@ -229,8 +228,9 @@ class UI:
         display.mainloop()
 
 
-'''Helper function for getting numbe of lines'''
+
 def getLines():
+    '''Helper function for getting number of lines'''
     cur_path = os.path.dirname(__file__)
     rel_path = "puzzles/puzzles.txt"
     abs_file_path = os.path.join(cur_path, rel_path)
