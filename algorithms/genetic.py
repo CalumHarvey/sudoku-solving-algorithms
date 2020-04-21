@@ -5,6 +5,7 @@ Copyright (c) 2009, 2017 Christian Thomas Jacobs
 
 import numpy
 import random
+import datetime
 random.seed()
 
 Nd = 9  # Number of digits (in the case of standard Sudoku puzzles, this is 9).
@@ -352,13 +353,13 @@ class Sudoku(object):
 
     def __init__(self):
         self.given = None 
+        self.counter = 0
         return
     
-    def load(self, path):
+    def load(self,f):
         # Load a configuration to solve.
-        with open(path, "r") as f:
-            values = numpy.loadtxt(f).reshape((Nd, Nd)).astype(int)
-            self.given = Given(values)
+        values = numpy.array(f).reshape((Nd, Nd)).astype(int)
+        self.given = Given(values)
         return
 
     def save(self, path, solution):
@@ -385,6 +386,7 @@ class Sudoku(object):
         # For up to 10000 generations...
         stale = 0
         for generation in range(0, Ng):
+            self.counter += 1
         
             print("Generation %d" % generation)
             
@@ -488,8 +490,43 @@ class Sudoku(object):
         print("No solution found.")
         return None
         
-s = Sudoku()
-#s.load("puzzle_mild.txt")
-solution = s.solve()
-if(solution):
-    s.save("solution.txt", solution)
+
+def runAlgorithm(board):
+
+    s = Sudoku()
+    s.load(board)
+
+    #Start timer 
+    start = datetime.datetime.now()
+
+    #Run algorithm
+    solution = s.solve()
+
+    #End timer
+    end = datetime.datetime.now()
+
+    #Calculated time taken for algorithm to run
+    timeTaken = end - start
+
+    #Turn time time taken into seconds
+    timeOutput = (timeTaken.total_seconds())
+
+    return timeOutput, s.counter
+
+def testing(board):
+
+    s = Sudoku()
+    s.load(board)
+
+    #Run algorithm
+    solution = s.solve()
+
+    return solution
+
+
+
+if __name__ == "__main__":
+
+    board = numpy.array([[7, 0, 6, 1, 3, 2, 0, 9, 0], [0, 0, 2, 6, 7, 4, 0, 3, 0], [0, 0, 1, 0, 0, 9, 0, 2, 0], [0, 4, 0, 9, 0, 0, 1, 0, 2], [2, 0, 9, 3, 0, 7, 4, 0, 6], [1, 0, 0, 0, 0, 5, 3, 8, 9], [3, 0, 0, 0, 0, 6, 2, 1, 0], [0, 1, 0, 2, 4, 3, 0, 6, 5], [6, 0, 0, 7, 0, 1, 9, 4, 0]])
+
+    runAlgorithm(board)

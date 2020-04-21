@@ -145,7 +145,7 @@ class sudokuGen:
 
 
     def main(self, grid):
-        #Inputs: empty sudoku grid
+        #Inputs: filled sudoku grid
 
         #Number of attempts to remove an element from the grid
         attempts = 5
@@ -196,7 +196,7 @@ def runAlgorithm(numPuzzles):
     for x in range(numPuzzles):
         #Loop for the number of puzzles being created
 
-        print(x)
+        print(x+1)
 
         #Create empty 9x9 grid
         grid = []

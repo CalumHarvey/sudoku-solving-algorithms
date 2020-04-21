@@ -10,7 +10,7 @@ class backtracking:
 
 
     def findUnassignedLocation(self, board, pos):
-         #Inputs: puzzle board, position - x,y coordinations
+        #Inputs: puzzle board, position - x,y coordinations
         #Loops through each number looking for an zero
         #Returns true if finds one, else false
         for row in range(9):
@@ -118,7 +118,17 @@ def runAlgorithm(board):
     #Return a tuple of the time taken and the number of passes
     return timeOutput, sudoku.counter
 
+def testing(board):
+    newBoard = np.array(board)
+
+    sudoku = backtracking(newBoard)
+    sudoku.solveSudoku(newBoard)
+
+    return newBoard
+
+
 
 if __name__ == "__main__":
     board = np.array([[7, 0, 6, 1, 3, 2, 0, 9, 0], [0, 0, 2, 6, 7, 4, 0, 3, 0], [0, 0, 1, 0, 0, 9, 0, 2, 0], [0, 4, 0, 9, 0, 0, 1, 0, 2], [2, 0, 9, 3, 0, 7, 4, 0, 6], [1, 0, 0, 0, 0, 5, 3, 8, 9], [3, 0, 0, 0, 0, 6, 2, 1, 0], [0, 1, 0, 2, 4, 3, 0, 6, 5], [6, 0, 0, 7, 0, 1, 9, 4, 0]])
     results = runAlgorithm(board)
+    print(board)

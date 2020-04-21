@@ -4,7 +4,6 @@ import os
 import numpy as np
 import statistics
 import random
-from simanneal import Annealer
 import datetime
 from tkinter import *
 import matplotlib.pyplot as plt
@@ -72,7 +71,7 @@ class Board:
                 result = algorithms.simannealing.runAlgorithm(newBoard)
             elif(algorithm == 3):
                 pass
-                #result = algorithms.genetic.runAlgorithm(newBoard)
+                result = algorithms.genetic.runAlgorithm(newBoard)
             elif(algorithm == 4):
                 result = algorithms.hillClimb.runAlgorithm(newBoard)
 
@@ -136,12 +135,12 @@ class UI:
 
         backtrackingButton = Checkbutton(frame, text="Backtracking", variable=self.backtracking, onvalue=1, offvalue=0)
         backtrackingButton.place(x=self.firstColumn, y=self.firstRow+(30*1))
-        simAnnealButton = Checkbutton(frame, text="Hill Climb", variable=self.hillClimb, onvalue=1, offvalue=0)
-        simAnnealButton.place(x=self.firstColumn, y=self.firstRow+(30*2))
-        geneticButton = Checkbutton(frame, text="Genetic", variable=self.genetic, onvalue=1, offvalue=0)
-        geneticButton.place(x=self.firstColumn, y=self.firstRow+(30*3))
-        hillClimbButton = Checkbutton(frame, text="Simulated Annealing", variable=self.simAnneal, onvalue=1, offvalue=0)
-        hillClimbButton.place(x=self.firstColumn, y=self.firstRow+(30*4))
+        hillClimbButton = Checkbutton(frame, text="Hill Climb", variable=self.hillClimb, onvalue=1, offvalue=0)
+        hillClimbButton.place(x=self.firstColumn, y=self.firstRow+(30*2))
+        simAnnealButton = Checkbutton(frame, text="Simulated Annealing", variable=self.simAnneal, onvalue=1, offvalue=0)
+        simAnnealButton.place(x=self.firstColumn, y=self.firstRow+(30*3))
+        geneticButton = Checkbutton(frame, text="Genetic (WIP)", variable=self.genetic, onvalue=1, offvalue=0)
+        geneticButton.place(x=self.firstColumn, y=self.firstRow+(30*4))
 
 
         tenPuzzlesButton = Radiobutton(frame, text="10", variable=self.puzzleNumber, value=10)
@@ -150,10 +149,12 @@ class UI:
         hundredPuzzlesButton.place(x=self.secondColumn, y=self.firstRow+(30*2))
         thousandPuzzleButton = Radiobutton(frame, text="1000", variable=self.puzzleNumber, value=1000)
         thousandPuzzleButton.place(x=self.secondColumn, y=self.firstRow+(30*3))
+        tenThousandPuzzleButton = Radiobutton(frame, text="10000", variable=self.puzzleNumber, value=10000)
+        tenThousandPuzzleButton.place(x=self.secondColumn, y=self.firstRow+(30*4))
         self.puzzleNumber.set(getLines())
 
         genButton = Button(frame, text="Generate Boards", width=14, relief=GROOVE, command= lambda: self.generationSelection(self.puzzleNumber))
-        genButton.place(x=self.secondColumn, y=self.firstRow+(30*4)+10)
+        genButton.place(x=self.secondColumn, y=self.firstRow+(30*5)+10)
 
         runAlgorithmButton = Button(frame, text="Run Algorithm", width=14, relief=GROOVE, command= lambda: self.algorithmSelection())
         runAlgorithmButton.place(x=self.firstColumn, y=self.firstRow+(30*5)+10)
@@ -162,7 +163,7 @@ class UI:
 
     def generationSelection(self, puzzleNumber):
         waitingLabel = Label(self.menu, text="working...", font=("Ariel", 10))
-        waitingLabel.place(x=self.secondColumn, y=self.firstRow+(30*5)+10)
+        waitingLabel.place(x=self.secondColumn, y=self.firstRow+(30*6)+10)
         sudokuGen.runAlgorithm(int(self.puzzleNumber.get()))
         waitingLabel.config(text="done")
     
@@ -177,10 +178,29 @@ class UI:
         if(self.hillClimb.get() == True):
             algorithmList.append(4)
         
-        a = Analysis()
-        a.runAllAlgorithms(algorithmList)
+        if(len(algorithmList) == 0):
 
-        self.displayAnalysis(a.timeArray, a.passesArray, algorithmList)
+            popup = Tk()
+            popup.wm_title("!")
+            w = 200
+            h = 80
+            ws = self.menu.winfo_screenwidth()
+            hs = self.menu.winfo_screenheight()
+            x = (ws/2) - (w/2)
+            y = (hs/2) - (h/2)
+            popup.geometry('%dx%d+%d+%d' % (w, h, x, y))
+            popup.resizable(width=False, height=False)
+
+            label = Label(popup, text="No algorithms selected", font=("Ariel", 10))
+            label.pack(side="top", fill="x", pady=10)
+            B1 = Button(popup, text="Okay", command = popup.destroy)
+            B1.pack()
+            popup.mainloop()
+        else:
+            a = Analysis()
+            a.runAllAlgorithms(algorithmList)
+
+            self.displayAnalysis(a.timeArray, a.passesArray, algorithmList)
     
     def displayAnalysis(self, times, passes, algorithmList):
         algorithmDict = {1 : "Backtracking", 2 : "Simulated Annealing", 3 : "Genetic", 4 : "Hill Climb"}
