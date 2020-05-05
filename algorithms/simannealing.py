@@ -59,12 +59,16 @@ class SudokuSolve(Annealer):
     def move(self):
         '''Swap 2 cells within a single 3x3 box randomly'''
 
-        #Get random box number and get list of coordinates in that box
-        boxNum = random.randrange(9)
-        boxCoords = getBox(boxNum)
+        while True:
+            #Get random box number and get list of coordinates in that box
+            boxNum = random.randrange(9)
+            boxCoords = getBox(boxNum)
 
-        #Get list of cells in box that are not in original board and can be changed
-        changeableCells = [i for i in boxCoords if self.board[i[0]][i[1]] == 0]
+            #Get list of cells in box that are not in original board and can be changed
+            changeableCells = [i for i in boxCoords if self.board[i[0]][i[1]] == 0]
+
+            if(len(changeableCells) >= 2):
+                break
         
         #Pick 2 random coordinates from the list of changeable cells
         a = random.sample(changeableCells, 1)

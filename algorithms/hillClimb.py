@@ -103,17 +103,22 @@ class hillClimb:
 
     def climb(self, oldState):
 
-        nextState = np.copy(oldState)
+
+        while True:
+            nextState = np.copy(oldState)
             
-        boxNum = random.randrange(0,8)
+            boxNum = random.randrange(0,8)
 
-        boxCoords = getBox(boxNum)
+            boxCoords = getBox(boxNum)
 
-        #changeableCells = [i for i in boxCoords if self.intialState[i[0]][i[1]] == 0]
-        changeableCells = []
-        for i in boxCoords:
-            if (self.initialState[i[0]][i[1]] == 0):
-                changeableCells.append(i)
+            #changeableCells = [i for i in boxCoords if self.intialState[i[0]][i[1]] == 0]
+            changeableCells = []
+            for i in boxCoords:
+             if (self.initialState[i[0]][i[1]] == 0):
+                    changeableCells.append(i)
+                
+            if(len(changeableCells) >= 2):
+                break
         
         #Pick 2 random coordinates from the list of changeable cells
         a = random.sample(changeableCells, 1)
@@ -128,8 +133,6 @@ class hillClimb:
         nextStateError = self.energy(nextState)
 
         currentError = self.energy(oldState)
-
-        print(self.passes)
 
 
         self.passes += 1

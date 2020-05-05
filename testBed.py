@@ -205,8 +205,8 @@ class UI:
     def displayAnalysis(self, times, passes, algorithmList):
         algorithmDict = {1 : "Backtracking", 2 : "Simulated Annealing", 3 : "Genetic", 4 : "Hill Climb"}
         display = Tk()
-        sizex = 800
-        sizey = 200
+        sizex = (len(algorithmList)*400)
+        sizey = 410
         posx  = 100
         posy  = 100
         display.wm_geometry("%dx%d+%d+%d" % (sizex, sizey, posx, posy))
@@ -215,24 +215,51 @@ class UI:
         i = np.arange(1,self.puzzleNumber.get() + 1)
 
         for x in range(len(algorithmList)):
+            timesAlg = times[x]
+            passesAlg = passes[x]
             print(algorithmDict.get(algorithmList[x]))
             l1 = Label(display, text=algorithmDict.get(algorithmList[x]), font=("Ariel", 15))
             l1.grid(row=0,column=x,sticky = W, pady = 2)
             l2 = Label(display, text="Times", font=("Ariel", 12))
             l2.grid(row=1, column=x,sticky = W, pady = 2)
-            l3 = Label(display, text="Raw Data: " + str(times[x]))
+            l3 = Label(display, text="Raw Data: " + str(timesAlg[:10]))
             l3.grid(row=2, column=x,sticky = W, pady = 2)
             temp = float("{0:.2f}".format(statistics.mean(times[x])))
             l4 = Label(display, text="Mean: " + str(temp) + "s")
             l4.grid(row=3, column=x,sticky = W, pady = 2)
+            temp = float("{0:.2f}".format(statistics.median(times[x])))
+            l8 = Label(display, text="Median: " + str(temp) + " s")
+            l8.grid(row=4, column=x,sticky = W, pady = 2)
+            temp = float("{0:.2f}".format(statistics.variance(times[x])))
+            l9 = Label(display, text="Variance: " + str(temp) + " s")
+            l9.grid(row=5, column=x,sticky = W, pady = 2)
+            temp = float("{0:.4f}".format(max(times[x])))
+            l9 = Label(display, text="Max: " + str(temp) + " s")
+            l9.grid(row=6, column=x,sticky = W, pady = 2)
+            temp = float("{0:.4f}".format(min(times[x])))
+            l9 = Label(display, text="Min: " + str(temp) + " s")
+            l9.grid(row=7, column=x,sticky = W, pady = 2)
+
 
             l5 = Label(display, text="Passes", font=("Ariel", 12))
-            l5.grid(row=5, column=x,sticky = W, pady = 2)
-            l6 = Label(display, text="Raw Data: " + str(passes[x]))
-            l6.grid(row=6, column=x,sticky = W, pady = 2)
+            l5.grid(row=10, column=x,sticky = W, pady = 2)
+            l6 = Label(display, text="Raw Data: " + str(passesAlg[:10]))
+            l6.grid(row=11, column=x,sticky = W, pady = 2)
             temp = float("{0:.2f}".format(statistics.mean(passes[x])))
             l7 = Label(display, text="Mean: " + str(temp) + " passes")
-            l7.grid(row=7, column=x,sticky = W, pady = 2)
+            l7.grid(row=12, column=x,sticky = W, pady = 2)
+            temp = float("{0:.2f}".format(statistics.median(passes[x])))
+            l8 = Label(display, text="Median: " + str(temp) + " passes")
+            l8.grid(row=13, column=x,sticky = W, pady = 2)
+            temp = float("{0:.2f}".format(statistics.variance(passes[x])))
+            l9 = Label(display, text="Variance: " + str(temp) + " passes")
+            l9.grid(row=14, column=x,sticky = W, pady = 2)
+            temp = float("{0:.4f}".format(max(passes[x])))
+            l9 = Label(display, text="Max: " + str(temp) + " passes")
+            l9.grid(row=15, column=x,sticky = W, pady = 2)
+            temp = float("{0:.4f}".format(min(passes[x])))
+            l9 = Label(display, text="Min: " + str(temp) + " passes")
+            l9.grid(row=16, column=x,sticky = W, pady = 2)
         
             npArrayTime = np.array(times[x])
             ax1.plot(i, npArrayTime, marker = '*', label = algorithmDict.get(algorithmList[x]))
