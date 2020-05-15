@@ -171,12 +171,13 @@ class UI:
         algorithmList = []
         if(self.backtracking.get() == True):
             algorithmList.append(1)
+        if(self.hillClimb.get() == True):
+            algorithmList.append(4)
         if(self.simAnneal.get() == True):
             algorithmList.append(2)
         if(self.genetic.get() == True):
             algorithmList.append(3)
-        if(self.hillClimb.get() == True):
-            algorithmList.append(4)
+
         
         if(len(algorithmList) == 0):
 
