@@ -47,9 +47,12 @@ class Population(object):
                     # If value is already given, don't change it.
                     if(given.values[i][j] != 0):
                         row[j] = given.values[i][j]
+                        print("given: ", type(row[j]))
                     # Fill in the gaps using the helper board.
                     elif(given.values[i][j] == 0):
                         row[j] = helper.values[i][j][random.randint(0, len(helper.values[i][j])-1)]
+                        print("not given: ", type(row[j]))
+                    input()
 
                 # If we don't have a valid board, then try again. There must be no duplicates in the row.
                 while(len(list(set(row))) != Nd):
@@ -104,8 +107,12 @@ class Candidate(object):
         column_sum = 0
         block_sum = 0
 
+        #print(self.values)
+
         for i in range(0, Nd):  # For each column...
             for j in range(0, Nd):  # For each number within the current column...
+                #print(self.values[i][j])
+                input()
                 column_count[self.values[i][j]-1] += 1  # ...Update list with occurrence of a particular number.
 
             column_sum += (1.0/len(set(column_count)))/Nd
