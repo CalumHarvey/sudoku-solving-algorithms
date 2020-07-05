@@ -39,7 +39,8 @@ class Population(object):
         for p in range(0, Nc):
             g = Candidate()
             for i in range(0, Nd): # New row in candidate.
-                row = numpy.zeros(Nd)
+                row = numpy.zeros(Nd, dtype=numpy.int32)
+                #print(row.dtype)
                 
                 # Fill in the givens.
                 for j in range(0, Nd): # New column j value in row i.
@@ -47,12 +48,9 @@ class Population(object):
                     # If value is already given, don't change it.
                     if(given.values[i][j] != 0):
                         row[j] = given.values[i][j]
-                        print("given: ", type(row[j]))
                     # Fill in the gaps using the helper board.
                     elif(given.values[i][j] == 0):
                         row[j] = helper.values[i][j][random.randint(0, len(helper.values[i][j])-1)]
-                        print("not given: ", type(row[j]))
-                    input()
 
                 # If we don't have a valid board, then try again. There must be no duplicates in the row.
                 while(len(list(set(row))) != Nd):
@@ -62,6 +60,7 @@ class Population(object):
 
                 g.values[i] = row
 
+            #print(g.values.dtype)
             self.candidates.append(g)
         
         # Compute the fitness of all candidates in the population.
@@ -95,7 +94,7 @@ class Population(object):
 class Candidate(object):
     """ A candidate solutions to the Sudoku puzzle. """
     def __init__(self):
-        self.values = numpy.zeros((Nd, Nd))
+        self.values = numpy.zeros((Nd, Nd), dtype=numpy.int32)
         self.fitness = None
         return
 
@@ -112,7 +111,6 @@ class Candidate(object):
         for i in range(0, Nd):  # For each column...
             for j in range(0, Nd):  # For each number within the current column...
                 #print(self.values[i][j])
-                input()
                 column_count[self.values[i][j]-1] += 1  # ...Update list with occurrence of a particular number.
 
             column_sum += (1.0/len(set(column_count)))/Nd
@@ -534,6 +532,16 @@ def testing(board):
 
 if __name__ == "__main__":
 
-    board = numpy.array([[7, 0, 6, 1, 3, 2, 0, 9, 0], [0, 0, 2, 6, 7, 4, 0, 3, 0], [0, 0, 1, 0, 0, 9, 0, 2, 0], [0, 4, 0, 9, 0, 0, 1, 0, 2], [2, 0, 9, 3, 0, 7, 4, 0, 6], [1, 0, 0, 0, 0, 5, 3, 8, 9], [3, 0, 0, 0, 0, 6, 2, 1, 0], [0, 1, 0, 2, 4, 3, 0, 6, 5], [6, 0, 0, 7, 0, 1, 9, 4, 0]])
+    board = numpy.array([
+    [7, 0, 6, 1, 3, 2, 0, 9, 0], 
+    [0, 0, 2, 6, 7, 4, 0, 3, 0], 
+    [0, 0, 1, 0, 0, 9, 0, 2, 0], 
+    [0, 4, 0, 9, 0, 0, 1, 0, 2], 
+    [2, 0, 9, 3, 0, 7, 4, 0, 6], 
+    [1, 0, 0, 0, 0, 5, 3, 8, 9], 
+    [3, 0, 0, 0, 0, 6, 2, 1, 0], 
+    [0, 1, 0, 2, 4, 3, 0, 6, 5], 
+    [6, 0, 0, 7, 0, 1, 9, 4, 0]
+    ])
 
     runAlgorithm(board)
