@@ -107,7 +107,6 @@ class Candidate:
 
 
 
-
 class Population:
     """ Population consists of a set of candidate solutions to the puzzle"""
     def __init__(self):
@@ -142,10 +141,35 @@ class Population:
 
 class Selection:
 
-
     def compete(self, candidates):
-        pass
+        """ Pick w random candidates from the population and get them to compete against each other"""
 
+       #Picking 2 random individuals
+        c1 = candidates[random.randint(0, len(candidates)-1)]
+        c2 = candidates[random.randint(0, len(candidates)-1)]
+        #Getting their fitness
+        f1 = c1.fitness
+        f2 = c2.fitness
+
+        #Find the fittest and the weakest.
+        if(f1 > f2):
+            fittest = c1
+            weakest = c2
+        else:
+            fittest = c2
+            weakest = c1
+
+        selection_rate = 0.85
+        r = random.uniform(0, 1.1)
+        while(r > 1):  
+            #Outside [0, 1] boundary. Choose another.
+            r = random.uniform(0, 1.1)
+        if(r < selection_rate):
+            #Lower than selection rate
+            return fittest
+        else:
+            #Higher than selection rate
+            return weakest
 
 
 
