@@ -7,6 +7,7 @@ class Candidate:
     def __init__(self):
         self.values = np.zeros((9, 9), dtype=np.int32)
         self.fitness = None
+        self.originalPuzzle = None
     
     def getBox(self, boxNum):
         """ Given box number from 0-8 return a list of the coordinates of the box """
@@ -23,6 +24,7 @@ class Candidate:
         """ Intialise a candidate solution by filling in blank spaces in incomplete puzzle given"""
 
         populatedBoard = puzzle.copy()
+        self.originalPuzzle = puzzle.copy()
         #For each box number 1-9...
         for boxNum in range(9):
         
@@ -77,7 +79,7 @@ class Candidate:
         self.fitness = score
 
 
-    def mutate(self, mutationRate, originalPuzzle):
+    def mutate(self, mutationRate):
         """ Picking a box, and then picking 2 values within the box to swap"""
 
         r = random.uniform(0, 1.1)
@@ -91,7 +93,7 @@ class Candidate:
                 print(boxNum)
 
                 #Get list of cells in box that are not in original board and can be changed
-                changeableCells = [i for i in boxCoords if originalPuzzle[i[0]][i[1]] == 0]
+                changeableCells = [i for i in boxCoords if self.originalPuzzle[i[0]][i[1]] == 0]
 
                 if(len(changeableCells) >= 2):
                     break
@@ -138,11 +140,10 @@ class Population:
 
 
 
-
 class Selection:
 
     def compete(self, candidates):
-        """ Pick w random candidates from the population and get them to compete against each other"""
+        """ Pick a random candidates from the population and get them to compete against each other"""
 
        #Picking 2 random individuals
         c1 = candidates[random.randint(0, len(candidates)-1)]
@@ -179,8 +180,28 @@ class Crossover:
         pass
 
 
-    def crossoverBoxes(self):
-        pass
+    def crossoverBoxes(self, parent1, parent2, boxNum):
+        """ Takes 2 parents and a box number for each and swaps the boxes from one to another """
+
+        #Initialise new Parents
+        newParent1 = parent1
+        newParent2 = parent2
+
+        #Get box coords wanting to be swapped
+        boxCoords = newParent1.getBox(boxNum1)
+
+        for coord in boxCoords:
+
+
+
+
+
+
+
+
+
+
+        return newParent1, newParent2
 
 
 
@@ -197,7 +218,7 @@ if __name__ == "__main__":
     for c in P.candidates:
         print(c.values)
         input()
-        c.mutate(mutation_rate, board)
+        c.mutate(mutation_rate)
         print(c.values)
         input()
 
