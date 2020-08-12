@@ -188,17 +188,15 @@ class Crossover:
         newParent2 = parent2
 
         #Get box coords wanting to be swapped
-        boxCoords = newParent1.getBox(boxNum1)
+        boxCoords = newParent1.getBox(boxNum)
 
-        for coord in boxCoords:
+        #Get list of cells in box that are not in original board and can be changed
+        changeableCells = [i for i in boxCoords if newParent1.originalPuzzle[i[0]][i[1]] == 0]
 
-
-
-
-
-
-
-
+        #For each coordinate that is changeable...
+        for coord in changeableCells:
+            #...swap the cell from one candidate to another
+            newParent1.values[coord[0]][coord[1]], newParent2.values[coord[0]][coord[1]] = newParent2.values[coord[0]][coord[1]] , newParent1.values[coord[0]][coord[1]]
 
 
         return newParent1, newParent2
@@ -214,13 +212,24 @@ if __name__ == "__main__":
 
     P = Population()
     P.intialise(board)
+    C = Crossover()
 
-    for c in P.candidates:
-        print(c.values)
-        input()
-        c.mutate(mutation_rate)
-        print(c.values)
-        input()
+    parent1 = P.candidates[0]
+    parent2 = P.candidates[1]
+
+    print(parent1.values)
+    print()
+    print(parent2.values)
+    print("\n\n")
+
+    newParent1, newParent2 = C.crossoverBoxes(parent1, parent2, 1)
+
+    print(newParent1.values)
+    print()
+    print(newParent2.values)
+
+
+
 
 
     
