@@ -177,15 +177,55 @@ class Selection:
 class Crossover:
 
     def crossover(self, parent1, parent2, crossoverRate):
-        pass
+        """ Takes 2 parents and a crossover rate and returns 2 new child Candidates created by swapping sections of the parents with each other"""
+
+        child1 = Candidate()
+        child2 = Candidate()
+        
+        # Make a copy of the parent genes.
+        child1.values = np.copy(parent1.values)
+        child2.values = np.copy(parent2.values)
+
+        r = random.uniform(0, 1.1)
+        while(r > 1):  # Outside [0, 1] boundary. Choose another.
+            r = random.uniform(0, 1.1)
+            
+        # Perform crossover.
+        if (r < crossover_rate):
+            #Pick 2 crossover points, a box between 1-7 and a box between 1-8 to ensure the whole board isn't swapped 
+            crossoverPoint1 = random.randint(0, 7)
+            crossoverPoint2 = random.randint(1, 8)
+
+            while(crossoverPoint1 == crossoverPoint2):
+                crossoverPoint1 = random.randint(0, 8)
+                crossoverPoint2 = random.randint(1, 9)
+
+            #Make crossoverPoint1 to be the lesser of the 2 integers 
+            if(crossoverPoint1 > crossoverPoint2):
+                crossoverPoint1, crossoverPoint2 = crossoverPoint2, crossoverPoint1
+
+            #For each box that needs to be crossed over...
+            for x in range(crossover_point1, crossoverPoint2):
+                #...Call crossoverBoxes with x as a box number
+                temp1, temp2 = self.crossoverBoxes(child1, child2, x)
+                #Add changes made to boards to each of the child Candidates
+                child1.values = np.copy(temp1.values)
+                child2.values = np.copy(temp2.values)
+        
+        return child1, child2
+
+
 
 
     def crossoverBoxes(self, parent1, parent2, boxNum):
         """ Takes 2 parents and a box number for each and swaps the boxes from one to another """
 
         #Initialise new Parents
-        newParent1 = parent1
-        newParent2 = parent2
+        newParent1 = Candidate()
+        newParent2 = Candidate()
+
+        newParent1.values = np.copy(parent1.values)
+        newParent2.values = np.copy(parent2.values)
 
         #Get box coords wanting to be swapped
         boxCoords = newParent1.getBox(boxNum)
@@ -199,18 +239,10 @@ class Crossover:
         #For each coordinate that is changeable...
         for coord in changeableCells:
             #...swap the cell from one candidate to another
-            # print("Coord: ", coord)
-            # print("Before Swap:")
-            # print("NewParent1:\n", newParent1.values)
-            # print("NewParent2:\n", newParent2.values)
             newParent1.values[coord[0]][coord[1]], newParent2.values[coord[0]][coord[1]] = newParent2.values[coord[0]][coord[1]] , newParent1.values[coord[0]][coord[1]]
-            # print("After Swap:")
-            # print("NewParent1:\n", newParent1.values)
-            # print("NewParent2:\n", newParent2.values)
-            # input()
 
 
-        return newParent1, newParent2
+        return newParent1.values, newParent2.values
 
 
 
