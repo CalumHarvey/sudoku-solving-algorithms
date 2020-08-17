@@ -114,10 +114,10 @@ class Population:
     def __init__(self):
         self.candidates = []
     
-    def intialise(self, puzzle):
+    def intialise(self, populationSize, puzzle):
         """ Initialise all the candidate solutions in the population """
         
-        for x in range(100):
+        for x in range(populationSize):
             newCandidate = Candidate()
             newCandidate.initialise(puzzle)
             self.candidates.append(newCandidate)
@@ -248,7 +248,7 @@ class Crossover:
 class Sudoku:
     
     def __init__(self):
-        self.given = None
+        self.originalPuzzle = None
         self.counter = 0
     
     def solve(self):
@@ -259,7 +259,38 @@ class Sudoku:
         Ng = 1000  # Number of generations.
         Nm = 0  # Number of mutations.
 
-        
+        # Mutation parameters.
+        phi = 0
+        sigma = 1
+        mutation_rate = 0.06
+
+        #Initialise the population
+        self.population = Population()
+        self.population.intialise(Nc, self.originalPuzzle)
+
+        #For each generation...
+        for generation in range(Ng):
+            
+            print("Generation: ", generation+1)
+
+            #For each candidate in the population...
+            for candidate in self.population.candidates:
+
+                #Check for solution by checking fitness equals 0 (e.g no errors in solution)
+                if(candidate.fitness == 0):
+                    print("Solution Found")
+                    print(candidate.values)
+                    #If solution found, return solution
+                    return candidate
+                
+                #Find best fitness in population
+                bestFitness = candidate.fitness
+
+                if(candidate.fitness < bestFitness):
+                    bestFitness = candidate.fitness
+            
+            print("Best Fitness: ", bestFitness)
+                
 
 
 
