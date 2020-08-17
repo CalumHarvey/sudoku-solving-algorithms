@@ -245,6 +245,23 @@ class Crossover:
         return newParent1.values, newParent2.values
 
 
+class Sudoku:
+    
+    def __init__(self):
+        self.given = None
+        self.counter = 0
+    
+    def solve(self):
+
+        #Initialisations
+        Nc = 100  # Number of candidates (i.e. population size).
+        Ne = int(0.05*Nc)  # Number of elites.
+        Ng = 1000  # Number of generations.
+        Nm = 0  # Number of mutations.
+
+        
+
+
 
 
 if __name__ == "__main__":
