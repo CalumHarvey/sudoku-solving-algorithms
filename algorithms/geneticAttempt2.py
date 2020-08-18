@@ -4,10 +4,10 @@ import numpy as np
 import random
 
 class Candidate:
-    def __init__(self):
+    def __init__(self, puzzle):
         self.values = np.zeros((9, 9), dtype=np.int32)
         self.fitness = None
-        self.originalPuzzle = None
+        self.originalPuzzle = puzzle
     
     def getBox(self, boxNum):
         """ Given box number from 0-8 return a list of the coordinates of the box """
@@ -24,7 +24,6 @@ class Candidate:
         """ Intialise a candidate solution by filling in blank spaces in incomplete puzzle given"""
 
         populatedBoard = puzzle.copy()
-        self.originalPuzzle = puzzle.copy()
         #For each box number 1-9...
         for boxNum in range(9):
         
@@ -118,9 +117,11 @@ class Population:
         """ Initialise all the candidate solutions in the population """
         
         for x in range(populationSize):
-            newCandidate = Candidate()
+            newCandidate = Candidate(puzzle)
             newCandidate.initialise(puzzle)
             self.candidates.append(newCandidate)
+
+        self.updateFitnesses()
 
 
     
@@ -178,8 +179,8 @@ class Crossover:
     def crossover(self, parent1, parent2, crossoverRate):
         """ Takes 2 parents and a crossover rate and returns 2 new child Candidates created by swapping sections of the parents with each other"""
 
-        child1 = Candidate()
-        child2 = Candidate()
+        child1 = Candidate(parent1.originalPuzzle)
+        child2 = Candidate(parent2.originalPuzzle)
         
         # Make a copy of the parent genes.
         child1.values = np.copy(parent1.values)
@@ -190,7 +191,7 @@ class Crossover:
             r = random.uniform(0, 1.1)
             
         # Perform crossover.
-        if (r < crossover_rate):
+        if (r < crossoverRate):
             #Pick 2 crossover points, a box between 1-7 and a box between 1-8 to ensure the whole board isn't swapped 
             crossoverPoint1 = random.randint(0, 7)
             crossoverPoint2 = random.randint(1, 8)
@@ -204,12 +205,12 @@ class Crossover:
                 crossoverPoint1, crossoverPoint2 = crossoverPoint2, crossoverPoint1
 
             #For each box that needs to be crossed over...
-            for x in range(crossover_point1, crossoverPoint2):
+            for x in range(crossoverPoint1, crossoverPoint2):
                 #...Call crossoverBoxes with x as a box number
                 temp1, temp2 = self.crossoverBoxes(child1, child2, x)
                 #Add changes made to boards to each of the child Candidates
-                child1.values = np.copy(temp1.values)
-                child2.values = np.copy(temp2.values)
+                child1.values = np.copy(temp1)
+                child2.values = np.copy(temp2)
         
         return child1, child2
 
@@ -220,8 +221,8 @@ class Crossover:
         """ Takes 2 parents and a box number for each and swaps the boxes from one to another """
 
         #Initialise new Parents
-        newParent1 = Candidate()
-        newParent2 = Candidate()
+        newParent1 = Candidate(parent1.originalPuzzle)
+        newParent2 = Candidate(parent2.originalPuzzle)
 
         newParent1.values = np.copy(parent1.values)
         newParent2.values = np.copy(parent2.values)
@@ -246,8 +247,8 @@ class Crossover:
 
 class Sudoku:
     
-    def __init__(self):
-        self.originalPuzzle = None
+    def __init__(self, puzzle):
+        self.originalPuzzle = puzzle
         self.counter = 0
     
     def solve(self):
@@ -267,10 +268,15 @@ class Sudoku:
         self.population = Population()
         self.population.intialise(Nc, self.originalPuzzle)
 
+        stale = 0
         #For each generation...
         for generation in range(Ng):
             
             print("Generation: ", generation+1)
+
+
+            #Find best fitness in population
+            bestFitness = self.population.candidates[0].fitness
 
             #For each candidate in the population...
             for candidate in self.population.candidates:
@@ -281,9 +287,6 @@ class Sudoku:
                     print(candidate.values)
                     #If solution found, return solution
                     return candidate
-                
-                #Find best fitness in population
-                bestFitness = candidate.fitness
 
                 if(candidate.fitness < bestFitness):
                     bestFitness = candidate.fitness
@@ -329,9 +332,24 @@ class Sudoku:
             #update fitnesses for new population
             self.population.candidates = nextPopulation
             self.population.updateFitnesses()
-                
+
+            # Calculate new adaptive mutation rate (based on Rechenberg's 1/5 success rule). This is to stop too much mutation as the fitness progresses towards unity.
+            if(Nm == 0):
+                phi = 0  # Avoid divide by zero.
+            else:
+                phi = phi / Nm
+            
+            if(phi > 0.2):
+                sigma = sigma/0.998
+            elif(phi < 0.2):
+                sigma = sigma*0.998
+
+            mutationRate = abs(np.random.normal(loc=0.0, scale=sigma, size=None))
 
             #Do next generation
+        
+        print("No solution Found")
+        return None
 
 
 
@@ -342,23 +360,28 @@ if __name__ == "__main__":
 
     board = np.array([[7, 0, 6, 1, 3, 2, 0, 9, 0], [0, 0, 2, 6, 7, 4, 0, 3, 0], [0, 0, 1, 0, 0, 9, 0, 2, 0], [0, 4, 0, 9, 0, 0, 1, 0, 2], [2, 0, 9, 3, 0, 7, 4, 0, 6], [1, 0, 0, 0, 0, 5, 3, 8, 9], [3, 0, 0, 0, 0, 6, 2, 1, 0], [0, 1, 0, 2, 4, 3, 0, 6, 5], [6, 0, 0, 7, 0, 1, 9, 4, 0]])
 
-    P = Population()
-    P.intialise(board)
-    C = Crossover()
+    S = Sudoku(board)
 
-    parent1 = P.candidates[0]
-    parent2 = P.candidates[1]
+    S.solve()
 
-    print(parent1.values)
-    print()
-    print(parent2.values)
-    print("\n\n")
 
-    newParent1, newParent2 = C.crossoverBoxes(parent1, parent2, 0)
+    # P = Population()
+    # P.intialise(board)
+    # C = Crossover()
 
-    print(newParent1.values)
-    print()
-    print(newParent2.values)
+    # parent1 = P.candidates[0]
+    # parent2 = P.candidates[1]
+
+    # print(parent1.values)
+    # print()
+    # print(parent2.values)
+    # print("\n\n")
+
+    # newParent1, newParent2 = C.crossoverBoxes(parent1, parent2, 0)
+
+    # print(newParent1.values)
+    # print()
+    # print(newParent2.values)
 
 
 
