@@ -134,7 +134,6 @@ class Population:
     def sort(self):
         """ Sort all the candidate solutions by their fitness from lowest to highest """
         self.candidates.sort(key=lambda x: x.fitness)
-        pass
 
 
 
@@ -262,7 +261,7 @@ class Sudoku:
         # Mutation parameters.
         phi = 0
         sigma = 1
-        mutation_rate = 0.06
+        mutationRate = 0.06
 
         #Initialise the population
         self.population = Population()
@@ -290,7 +289,49 @@ class Sudoku:
                     bestFitness = candidate.fitness
             
             print("Best Fitness: ", bestFitness)
+
+            nextPopulation = []
+
+            #Sort population and get best fitness candidates
+            self.population.sort()
+
+            bestCandidates = []
+            for candidate in range(Ne):
+                bestCandidates.append(self.population.candidates[candidate])
+
+            #Do tournament on population and crossover the parents
+
+            for count in range(Ne, Nc, 2):
+                #Select paretns from population to be crossed over
+                S =  Selection()
+
+                parent1 = S.compete(self.population.candidates)
+                parent2 = S.compete(self.population.candidates)
+
+                C = Crossover()
+                child1, child2 = C.crossover(parent1, parent2, 1.0)
+
+
+                #Mutate the child candidates from the crossover
+
+                child1.mutate(mutationRate)
+
+                child2.mutate(mutationRate)
+
+                #Add new candidates to the population
+
+                nextPopulation.append(child1)
+                nextPopulation.append(child2)
+
+            for candidate in bestCandidates:
+                nextPopulation.append(candidate)
                 
+            #update fitnesses for new population
+            self.population.candidates = nextPopulation
+            self.population.updateFitnesses()
+                
+
+            #Do next generation
 
 
 

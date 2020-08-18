@@ -428,7 +428,7 @@ class Sudoku(object):
                 parent1 = t.compete(self.population.candidates)
                 parent2 = t.compete(self.population.candidates)
                 
-                ## Cross-over.
+                # Cross-over.
                 cc = CycleCrossover()
                 child1, child2 = cc.crossover(parent1, parent2, crossover_rate=1.0)
                 
