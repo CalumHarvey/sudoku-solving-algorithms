@@ -119,6 +119,8 @@ class Population:
     def intialise(self, populationSize, puzzle):
         """ Initialise all the candidate solutions in the population """
         
+        self.candidates = []
+        
         for x in range(populationSize):
             newCandidate = Candidate(puzzle)
             newCandidate.initialise(puzzle)
@@ -368,22 +370,24 @@ class Sudoku:
             #Do next generation
 
 
-            # # Check for stale population.
-            # self.population.sort()
-            # if(self.population.candidates[0].fitness != self.population.candidates[1].fitness):
-            #     stale = 0
-            # else:
-            #     stale += 1
+            # Check for stale population.
+            self.population.sort()
+            if(self.population.candidates[0].fitness != self.population.candidates[4].fitness):
+                stale = 0
+            else:
+                stale += 1
+            
+            print("Staleness:", stale)
 
-            # # Re-seed the population if 100 generations have passed with the fittest two candidates always having the same fitness.
-            # if(stale >= 100):
-            #     print("The population has gone stale. Re-seeding...")
-            #     self.population.intialise(Nc, self.originalPuzzle)
-            #     stale = 0
-            #     sigma = 1
-            #     phi = 0
-            #     mutations = 0
-            #     mutation_rate = 0.06
+            # Re-seed the population if 100 generations have passed with the fittest two candidates always having the same fitness.
+            if(stale >= 1000):
+                print("The population has gone stale. Re-seeding...")
+                self.population.intialise(Nc, self.originalPuzzle)
+                stale = 0
+                sigma = 1
+                phi = 0
+                mutations = 0
+                mutation_rate = 0.06
 
         
         print("No solution Found")
