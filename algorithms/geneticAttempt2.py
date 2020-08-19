@@ -89,7 +89,6 @@ class Candidate:
                 #Get random box number and get list of coordinates in that box
                 boxNum = random.randrange(9)
                 boxCoords = self.getBox(boxNum)
-                print(boxNum)
 
                 #Get list of cells in box that are not in original board and can be changed
                 changeableCells = [i for i in boxCoords if self.originalPuzzle[i[0]][i[1]] == 0]
@@ -122,6 +121,8 @@ class Population:
             self.candidates.append(newCandidate)
 
         self.updateFitnesses()
+
+        print("Population Created")
 
 
     
@@ -229,12 +230,10 @@ class Crossover:
 
         #Get box coords wanting to be swapped
         boxCoords = newParent1.getBox(boxNum)
-        print("BoxCoords: ", boxCoords)
 
         #Get list of cells in box that are not in original board and can be changed
         changeableCells = [i for i in boxCoords if newParent1.originalPuzzle[i[0]][i[1]] == 0]
 
-        print("Changeable cells: ", changeableCells)
 
         #For each coordinate that is changeable...
         for coord in changeableCells:
@@ -256,7 +255,7 @@ class Sudoku:
         #Initialisations
         Nc = 100  # Number of candidates (i.e. population size).
         Ne = int(0.05*Nc)  # Number of elites.
-        Ng = 1000  # Number of generations.
+        Ng = 10000  # Number of generations.
         Nm = 0  # Number of mutations.
 
         # Mutation parameters.
