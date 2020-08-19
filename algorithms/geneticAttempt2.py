@@ -83,6 +83,7 @@ class Candidate:
 
         r = random.uniform(0, 1.1)
 
+        success = False
         if(r > mutationRate):
 
             while True:
@@ -102,7 +103,10 @@ class Candidate:
         
             #Swap values of 2 random coordinates
             self.values[a[0][0]][a[0][1]], self.values[b[0][0]][b[0][1]] = self.values[b[0][0]][b[0][1]] , self.values[a[0][0]][a[0][1]]
+            success = True
+            self.updateFitness()
 
+        return success
 
 
 
@@ -213,6 +217,9 @@ class Crossover:
                 child1.values = np.copy(temp1)
                 child2.values = np.copy(temp2)
         
+        child1.updateFitness()
+        child2.updateFitness()
+        
         return child1, child2
 
 
@@ -315,10 +322,23 @@ class Sudoku:
 
 
                 #Mutate the child candidates from the crossover
+                oldFitness = child1.fitness
 
-                child1.mutate(mutationRate)
+                success = child1.mutate(mutationRate)
+                child1.updateFitness()
+                if(success):
+                    Nm += 1
+                    if(child1.fitness > oldFitness):  # Used to calculate the relative success rate of mutations.
+                        phi = phi + 1
 
-                child2.mutate(mutationRate)
+                oldFitness = child2.fitness
+
+                success = child2.mutate(mutationRate)
+                child2.updateFitness()
+                if(success):
+                    Nm += 1
+                    if(child2.fitness > oldFitness):  # Used to calculate the relative success rate of mutations.
+                        phi = phi + 1
 
                 #Add new candidates to the population
 
@@ -346,6 +366,25 @@ class Sudoku:
             mutationRate = abs(np.random.normal(loc=0.0, scale=sigma, size=None))
 
             #Do next generation
+
+
+            # # Check for stale population.
+            # self.population.sort()
+            # if(self.population.candidates[0].fitness != self.population.candidates[1].fitness):
+            #     stale = 0
+            # else:
+            #     stale += 1
+
+            # # Re-seed the population if 100 generations have passed with the fittest two candidates always having the same fitness.
+            # if(stale >= 100):
+            #     print("The population has gone stale. Re-seeding...")
+            #     self.population.intialise(Nc, self.originalPuzzle)
+            #     stale = 0
+            #     sigma = 1
+            #     phi = 0
+            #     mutations = 0
+            #     mutation_rate = 0.06
+
         
         print("No solution Found")
         return None
