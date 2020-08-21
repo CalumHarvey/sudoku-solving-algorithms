@@ -71,7 +71,7 @@ class Board:
                 result = algorithms.simannealing.runAlgorithm(newBoard)
             elif(algorithm == 3):
                 pass
-                result = algorithms.genetic.runAlgorithm(newBoard)
+                result = algorithms.geneticAttempt2.runAlgorithm(newBoard)
             elif(algorithm == 4):
                 result = algorithms.hillClimb.runAlgorithm(newBoard)
 

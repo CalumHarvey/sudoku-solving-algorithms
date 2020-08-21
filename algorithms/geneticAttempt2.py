@@ -1,7 +1,7 @@
 
-
 import numpy as np
 import random
+import datetime
 
 class Candidate:
     def __init__(self, puzzle):
@@ -266,6 +266,7 @@ class Sudoku:
         Ne = int(0.05*Nc)  # Number of elites.
         Ng = 10000  # Number of generations.
         Nm = 0  # Number of mutations.
+        retries = 0 # Number of times population has been reinitialised
 
         # Mutation parameters.
         phi = 0
@@ -293,8 +294,9 @@ class Sudoku:
                 if(candidate.fitness == 0):
                     print("Solution Found")
                     print(candidate.values)
+                    print("Number of retries: ", retries)
                     #If solution found, return solution
-                    return candidate
+                    return generation
 
                 if(candidate.fitness < bestFitness):
                     bestFitness = candidate.fitness
@@ -388,42 +390,62 @@ class Sudoku:
                 phi = 0
                 mutations = 0
                 mutation_rate = 0.06
+                retries += 1
 
         
         print("No solution Found")
         return None
 
 
+def runAlgorithm(board):
 
+    s = Sudoku(board)
+
+    #Start timer 
+    start = datetime.datetime.now()
+
+    #Run algorithm
+    solution = s.solve()
+
+    #End timer
+    end = datetime.datetime.now()
+
+    #Calculated time taken for algorithm to run
+    timeTaken = end - start
+
+    #Turn time time taken into seconds
+    timeOutput = (timeTaken.total_seconds())
+
+    return timeOutput, s.counter
+
+def testing(board):
+
+    s = Sudoku(board)
+    #Run algorithm
+    solution = s.solve()
+
+    return solution
 
 if __name__ == "__main__":
 
-    mutation_rate = 0.06
+    board = np.array([
+    [7, 0, 6, 1, 3, 2, 0, 9, 0], 
+    [0, 0, 2, 6, 7, 4, 0, 3, 0], 
+    [0, 0, 1, 0, 0, 9, 0, 2, 0], 
+    [0, 4, 0, 9, 0, 0, 1, 0, 2], 
+    [2, 0, 9, 3, 0, 7, 4, 0, 6], 
+    [1, 0, 0, 0, 0, 5, 3, 8, 9], 
+    [3, 0, 0, 0, 0, 6, 2, 1, 0], 
+    [0, 1, 0, 2, 4, 3, 0, 6, 5], 
+    [6, 0, 0, 7, 0, 1, 9, 4, 0]])
 
-    board = np.array([[7, 0, 6, 1, 3, 2, 0, 9, 0], [0, 0, 2, 6, 7, 4, 0, 3, 0], [0, 0, 1, 0, 0, 9, 0, 2, 0], [0, 4, 0, 9, 0, 0, 1, 0, 2], [2, 0, 9, 3, 0, 7, 4, 0, 6], [1, 0, 0, 0, 0, 5, 3, 8, 9], [3, 0, 0, 0, 0, 6, 2, 1, 0], [0, 1, 0, 2, 4, 3, 0, 6, 5], [6, 0, 0, 7, 0, 1, 9, 4, 0]])
+    r = 0
+    for x in range(10):
+        S = Sudoku(board)
+        r += S.solve()
+    
+    print("Average number of generations: ", r/10)
 
-    S = Sudoku(board)
-
-    S.solve()
-
-
-    # P = Population()
-    # P.intialise(board)
-    # C = Crossover()
-
-    # parent1 = P.candidates[0]
-    # parent2 = P.candidates[1]
-
-    # print(parent1.values)
-    # print()
-    # print(parent2.values)
-    # print("\n\n")
-
-    # newParent1, newParent2 = C.crossoverBoxes(parent1, parent2, 0)
-
-    # print(newParent1.values)
-    # print()
-    # print(newParent2.values)
 
 
 
