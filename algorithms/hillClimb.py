@@ -53,32 +53,38 @@ class hillClimb:
     def __init__(self, puzzle):
         self.currentState = np.zeros((9,9))
         self.solutionState = np.zeros((9,9))
-        self.iterations = 0
         self.initialState = np.array(puzzle)
         self.passes = 0
+        self.energy = 81
+        self.solved = False
+        self.stale = 0
+        self.retries = 0
 
 
     def solve(self):
 
+        self.currentState = initialSolution(self.initialState)
+
         while True:
 
-            self.iterations = 0
-            self.currentState = initialSolution(self.initialState)
+            climbed = self.move()
+            print(self.passes, ": ", self.energy)
 
-            solutionState = self.climb(self.currentState)
+            if(self.solved == True):
+                print("Puzzle Solved")
+                print("Number of passes: ", self.passes)
+                print("Number of retries: ", self.retries)
+                return self.passes
 
-            self.currentState = solutionState
-
-            if(self.energy(self.currentState) == 0):
-                break
-            if(self.passes > 30000):
-                break
-        
-        return solutionState
+            if (self.stale >= 1000):
+                self.currentState = initialSolution(self.initialState)
+                self.stale = 0
+                self.energy = 81
+                self.retries += 1
 
 
 
-    def energy(self, puzzle):
+    def getEnergy(self, puzzle):
         '''Calculate number of errors in solution'''
         score = 0
         #For each row 1-9...
@@ -101,11 +107,13 @@ class hillClimb:
         return score
 
 
-    def climb(self, oldState):
+    def move(self):
+        """ Select box and swap 2 non-fixed cells within the box """
 
+        climbed = False
 
         while True:
-            nextState = np.copy(oldState)
+            nextState = np.copy(self.currentState)
             
             boxNum = random.randrange(0,8)
 
@@ -130,23 +138,27 @@ class hillClimb:
         nextState[b[0][0]][b[0][1]] = temp
 
 
-        nextStateError = self.energy(nextState)
+        nextStateError = self.getEnergy(nextState)
 
-        currentError = self.energy(oldState)
+        currentError = self.energy
 
 
         self.passes += 1
-        self.iterations += 1
-
-        if(self.iterations == 200):
-            return oldState
 
         if(nextStateError == 0):
-            return nextState
-        elif(nextStateError >= currentError):
-            return self.climb(oldState)
+            self.currentState = nextState
+            self.solved = True
+        
+        elif(nextStateError < currentError):
+            self.currentState = nextState
+            self.energy = nextStateError
+            climbed = True
+        
         else:
-            return self.climb(nextState)
+            self.stale += 1
+
+
+        return climbed 
 
 def runAlgorithm(board):
     a = hillClimb(np.array(board))
@@ -177,11 +189,18 @@ if __name__ == "__main__":
 
     board = np.array([[7, 0, 6, 1, 3, 2, 0, 9, 0], [0, 0, 2, 6, 7, 4, 0, 3, 0], [0, 0, 1, 0, 0, 9, 0, 2, 0], [0, 4, 0, 9, 0, 0, 1, 0, 2], [2, 0, 9, 3, 0, 7, 4, 0, 6], [1, 0, 0, 0, 0, 5, 3, 8, 9], [3, 0, 0, 0, 0, 6, 2, 1, 0], [0, 1, 0, 2, 4, 3, 0, 6, 5], [6, 0, 0, 7, 0, 1, 9, 4, 0]])
 
-    a = hillClimb(board)
+    passesList = []
+    for x in range(10):
 
-    solvedBoard = a.solve()
+        a = hillClimb(board)
 
-    print(solvedBoard)
+        passes = a.solve()
+        passesList.append(passes)
+
+    #print(solvedBoard)
+    print(passesList)
+    sumPasses = sum(passesList)
+    print("Average passes: ", sumPasses/10)
 
 
 
