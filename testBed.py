@@ -139,7 +139,7 @@ class UI:
         hillClimbButton.place(x=self.firstColumn, y=self.firstRow+(30*2))
         simAnnealButton = Checkbutton(frame, text="Simulated Annealing", variable=self.simAnneal, onvalue=1, offvalue=0)
         simAnnealButton.place(x=self.firstColumn, y=self.firstRow+(30*3))
-        geneticButton = Checkbutton(frame, text="Genetic (WIP)", variable=self.genetic, onvalue=1, offvalue=0)
+        geneticButton = Checkbutton(frame, text="Genetic", variable=self.genetic, onvalue=1, offvalue=0)
         geneticButton.place(x=self.firstColumn, y=self.firstRow+(30*4))
 
 

@@ -74,13 +74,17 @@ class hillClimb:
                 print("Puzzle Solved")
                 print("Number of passes: ", self.passes)
                 print("Number of retries: ", self.retries)
-                return self.passes
+                return self.currentState
 
-            if (self.stale >= 1000):
+            if (self.stale >= 500):
                 self.currentState = initialSolution(self.initialState)
                 self.stale = 0
                 self.energy = 81
                 self.retries += 1
+
+            if(self.retries > 1000):
+                print("Solution not found - algorithm timed out")
+                return self.currentState
 
 
 
@@ -153,6 +157,7 @@ class hillClimb:
             self.currentState = nextState
             self.energy = nextStateError
             climbed = True
+            self.stale = 0
         
         else:
             self.stale += 1
@@ -162,7 +167,6 @@ class hillClimb:
 
 def runAlgorithm(board):
     a = hillClimb(np.array(board))
-
 
     start = datetime.datetime.now()
 
@@ -189,18 +193,31 @@ if __name__ == "__main__":
 
     board = np.array([[7, 0, 6, 1, 3, 2, 0, 9, 0], [0, 0, 2, 6, 7, 4, 0, 3, 0], [0, 0, 1, 0, 0, 9, 0, 2, 0], [0, 4, 0, 9, 0, 0, 1, 0, 2], [2, 0, 9, 3, 0, 7, 4, 0, 6], [1, 0, 0, 0, 0, 5, 3, 8, 9], [3, 0, 0, 0, 0, 6, 2, 1, 0], [0, 1, 0, 2, 4, 3, 0, 6, 5], [6, 0, 0, 7, 0, 1, 9, 4, 0]])
 
-    passesList = []
-    for x in range(10):
+    
+    
+    
+    
+    board2 = np.array([[9, 0, 0, 3, 0, 2, 0, 0, 6], [8, 0, 0, 5, 9, 0, 1, 0, 2], [6, 1, 0, 8, 0, 4, 0, 9, 5], [5, 8, 3, 2, 0, 9, 0, 0, 0], [0, 0, 0, 0, 0, 3, 0, 5, 0], [0, 6, 9, 0, 0, 0, 2, 0, 0], [0, 0, 7, 9, 0, 1, 0, 0, 0], [1, 0, 0, 0, 2, 5, 0, 0, 0], [0, 5, 0, 4, 3, 0, 0, 0, 0]])
 
-        a = hillClimb(board)
+    board3 = np.array([
+        [0, 2, 8, 0, 9, 0, 7, 3, 0], 
+        [0, 0, 5, 8, 1, 7, 0, 0, 0], 
+        [6, 0, 0, 2, 0, 0, 9, 0, 0], 
+        [3, 0, 2, 0, 0, 0, 1, 0, 0], 
+        [0, 0, 0, 0, 5, 8, 2, 6, 0], 
+        [0, 0, 0, 0, 0, 0, 8, 7, 0], 
+        [2, 5, 3, 7, 0, 0, 4, 9, 0], 
+        [7, 0, 6, 0, 0, 0, 0, 0, 2], 
+        [8, 9, 0, 5, 0, 2, 3, 0, 0]])
 
-        passes = a.solve()
-        passesList.append(passes)
 
-    #print(solvedBoard)
-    print(passesList)
-    sumPasses = sum(passesList)
-    print("Average passes: ", sumPasses/10)
+
+    a = hillClimb(board2)
+
+    solvedBoard = a.solve()
+
+    print(solvedBoard)
+
 
 
 
