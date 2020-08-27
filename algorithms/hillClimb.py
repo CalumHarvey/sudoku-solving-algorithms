@@ -82,7 +82,7 @@ class hillClimb:
                 self.energy = 81
                 self.retries += 1
 
-            if(self.retries > 1000):
+            if(self.retries > 500):
                 print("Solution not found - algorithm timed out")
                 return self.currentState
 
